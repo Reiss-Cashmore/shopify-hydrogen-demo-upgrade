@@ -4,27 +4,27 @@
 
 /* Tokens */
 :root {
-  --color-primary: 20 20 20; /* Text, buttons, etc. */
-  --color-contrast: 250 250 249; /* Backgrounds, borders, etc. */
-  --color-accent: 191 72 0; /* Labels like "On sale" */
+  --color-primary: 10 10 10; /* Text, buttons, etc. - Darker for more contrast */
+  --color-contrast: 255 255 255; /* Backgrounds, borders, etc. - Pure white */
+  --color-accent: 220 38 38; /* Labels like "On sale" - Bold red */
   --font-size-fine: 0.75rem; /* text-xs */
   --font-size-copy: 1rem; /* text-base */
   --font-size-lead: 1.125rem; /* text-lg */
-  --font-size-heading: 2rem; /* text-2xl */
-  --font-size-display: 3rem; /* text-4xl */
+  --font-size-heading: 2.25rem; /* text-2xl */
+  --font-size-display: 3.5rem; /* text-4xl */
   --color-shop-pay: #5a31f4;
   --shop-pay-button--width: 100%; /* Sets the width for the shop-pay-button web component */
-  --height-nav: 3rem;
+  --height-nav: 3.5rem;
   --screen-height: 100vh;
   --screen-height-dynamic: 100vh;
 
   @media (min-width: 32em) {
-    --height-nav: 4rem;
+    --height-nav: 4.5rem;
   }
   @media (min-width: 48em) {
     --height-nav: 6rem;
-    --font-size-heading: 2.25rem; /* text-4xl */
-    --font-size-display: 3.75rem; /* text-6xl */
+    --font-size-heading: 2.5rem; /* text-4xl */
+    --font-size-display: 4.5rem; /* text-6xl */
   }
   @supports (height: 100svh) {
     --screen-height: 100svh;
@@ -36,9 +36,9 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-primary: 250 250 250;
-    --color-contrast: 32 33 36;
-    --color-accent: 235 86 40;
+    --color-primary: 255 255 255;
+    --color-contrast: 15 15 15;
+    --color-accent: 239 68 68;
   }
 }
 
@@ -48,6 +48,24 @@
   }
   100% {
     opacity: 1;
+  }
+}
+
+@keyframes oscillate {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes oscillateSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(0.5deg);
   }
 }
 
@@ -64,10 +82,16 @@ shop-pay-button {
 
   body {
     @apply border-primary/10 bg-contrast text-primary/90 antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   }
 
   html {
     scroll-padding-top: 10rem;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
 
   model-viewer::part(default-progress-mask) {
@@ -142,6 +166,23 @@ shop-pay-button {
     animation: fadeInAnimation ease 500ms forwards;
   }
 
+  .oscillate {
+    animation: oscillate 3s ease-in-out infinite;
+    display: inline-block;
+  }
+
+  .oscillate-slow {
+    animation: oscillateSlow 4s ease-in-out infinite;
+    display: inline-block;
+  }
+
+  .hero-text {
+    font-weight: 900;
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
   .hiddenScroll {
     scrollbar-width: none;
     &::-webkit-scrollbar {
@@ -170,13 +211,17 @@ shop-pay-button {
   }
 
   .card-image {
-    @apply relative flex items-center justify-center overflow-clip rounded;
+    @apply relative flex items-center justify-center overflow-clip rounded-lg;
+    transition: transform 0.3s ease;
     &::before {
       content: ' ';
-      @apply absolute top-0 left-0 z-10 block h-full w-full rounded shadow-border;
+      @apply absolute top-0 left-0 z-10 block h-full w-full rounded-lg shadow-border;
     }
     img {
       @apply aspect-[inherit] w-full object-cover;
+    }
+    &:hover {
+      transform: scale(1.02);
     }
   }
 }

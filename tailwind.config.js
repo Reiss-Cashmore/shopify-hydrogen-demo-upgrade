@@ -39,8 +39,12 @@ const config = {
         mobileGallery: 'calc(100vw - 3rem)',
       },
       fontFamily: {
-        sans: ['Helvetica Neue', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'sans-serif'],
         serif: ['"IBMPlexSerif"', 'Palatino', 'ui-serif'],
+      },
+      fontWeight: {
+        extrabold: '800',
+        black: '900',
       },
       fontSize: {
         display: ['var(--font-size-display)', '1.1'],
@@ -48,6 +52,9 @@ const config = {
         lead: ['var(--font-size-lead)', '1.333'],
         copy: ['var(--font-size-copy)', '1.5'],
         fine: ['var(--font-size-fine)', '1.333'],
+      },
+      letterSpacing: {
+        tighter: '-0.03em',
       },
       maxWidth: {
         'prose-narrow': '45ch',

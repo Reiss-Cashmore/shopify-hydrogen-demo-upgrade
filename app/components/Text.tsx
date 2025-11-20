@@ -72,10 +72,10 @@ export function Heading({
   width?: 'default' | 'narrow' | 'wide';
 } & React.HTMLAttributes<HTMLHeadingElement>) {
   const sizes = {
-    display: 'font-bold text-display',
-    heading: 'font-bold text-heading',
-    lead: 'font-bold text-lead',
-    copy: 'font-medium text-copy',
+    display: 'font-black text-display tracking-tighter',
+    heading: 'font-extrabold text-heading tracking-tight',
+    lead: 'font-bold text-lead tracking-tight',
+    copy: 'font-semibold text-copy',
   };
 
   const widths = {

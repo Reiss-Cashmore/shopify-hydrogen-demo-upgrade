@@ -230,7 +230,7 @@ function MobileHeader({
         to="/"
       >
         <Heading
-          className="font-bold text-center leading-none"
+          className="font-black text-center leading-none tracking-tight"
           as={isHome ? 'h1' : 'h2'}
         >
           {title}
@@ -270,7 +270,7 @@ function DesktopHeader({
       } hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-8 px-12 py-8`}
     >
       <div className="flex gap-12">
-        <Link className="font-bold" to="/" prefetch="intent">
+        <Link className="font-black text-lg tracking-tight" to="/" prefetch="intent">
           {title}
         </Link>
         <nav className="flex gap-8">
@@ -282,7 +282,7 @@ function DesktopHeader({
               target={item.target}
               prefetch="intent"
               className={({isActive}) =>
-                isActive ? 'pb-1 border-b -mb-px' : 'pb-1'
+                isActive ? 'pb-1 border-b-2 -mb-px font-semibold' : 'pb-1 font-medium hover:font-semibold transition-all'
               }
             >
               {item.title}

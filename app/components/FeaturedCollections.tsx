@@ -37,7 +37,7 @@ export function FeaturedCollections({
                     />
                   )}
                 </div>
-                <Heading size="copy">{collection.title}</Heading>
+                <Heading size="copy" className="font-bold">{collection.title}</Heading>
               </div>
             </Link>
           );

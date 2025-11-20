@@ -53,20 +53,19 @@ export function CountrySelector() {
     <section
       ref={observerRef}
       className="grid w-full gap-4"
-      onMouseLeave={closeDropdown}
     >
       <Heading size="lead" className="cursor-default" as="h3">
         Country
       </Heading>
       <div className="relative">
         <details
-          className="absolute w-full border rounded border-contrast/30 dark:border-white open:round-b-none overflow-clip"
+          className="relative w-full rounded-xl border border-primary/40 bg-primary text-contrast shadow-lg"
           ref={closeRef}
         >
-          <summary className="flex items-center justify-between w-full px-4 py-3 cursor-pointer">
+          <summary className="flex items-center justify-between w-full px-4 py-3 cursor-pointer bg-primary text-contrast">
             {selectedLocale.label}
           </summary>
-          <div className="w-full overflow-auto border-t border-contrast/30 dark:border-white bg-contrast/30 max-h-36">
+          <div className="w-full overflow-auto border-t border-primary/30 bg-primary text-contrast max-h-48">
             {countries &&
               Object.keys(countries).map((countryPath) => {
                 const countryLocale = countries[countryPath];
@@ -120,7 +119,7 @@ function Country({
         className={clsx([
           'text-contrast dark:text-primary',
           'bg-primary dark:bg-contrast w-full p-2 transition rounded flex justify-start',
-          'items-center text-left cursor-pointer py-2 px-4',
+          'items-center text-left cursor-pointer py-2 px-4 hover:bg-primary/90 dark:hover:bg-contrast/90',
         ])}
         type="submit"
         variant="primary"

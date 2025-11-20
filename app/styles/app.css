@@ -4,27 +4,31 @@
 
 /* Tokens */
 :root {
-  --color-primary: 10 10 10; /* Text, buttons, etc. - Darker for more contrast */
-  --color-contrast: 255 255 255; /* Backgrounds, borders, etc. - Pure white */
-  --color-accent: 220 38 38; /* Labels like "On sale" - Bold red */
-  --font-size-fine: 0.75rem; /* text-xs */
-  --font-size-copy: 1rem; /* text-base */
-  --font-size-lead: 1.125rem; /* text-lg */
-  --font-size-heading: 2.25rem; /* text-2xl */
-  --font-size-display: 3.5rem; /* text-4xl */
+  --color-primary: 233 238 255;
+  --color-contrast: 5 7 20;
+  --color-surface: 14 16 38;
+  --color-surface-highlight: 28 32 66;
+  --color-stroke: 101 110 159;
+  --color-accent: 255 92 138;
+  --font-size-fine: 0.75rem;
+  --font-size-copy: 1rem;
+  --font-size-lead: 1.125rem;
+  --font-size-heading: 2.35rem;
+  --font-size-display: clamp(2.5rem, 6vw, 4.75rem);
   --color-shop-pay: #5a31f4;
-  --shop-pay-button--width: 100%; /* Sets the width for the shop-pay-button web component */
-  --height-nav: 3.5rem;
+  --shop-pay-button--width: 100%;
+  --height-nav: 3.75rem;
   --screen-height: 100vh;
   --screen-height-dynamic: 100vh;
+  --section-radius: 1.75rem;
+  --grid-size: 36px;
 
   @media (min-width: 32em) {
     --height-nav: 4.5rem;
   }
   @media (min-width: 48em) {
-    --height-nav: 6rem;
-    --font-size-heading: 2.5rem; /* text-4xl */
-    --font-size-display: 4.5rem; /* text-6xl */
+    --height-nav: 5.5rem;
+    --font-size-heading: 2.65rem;
   }
   @supports (height: 100svh) {
     --screen-height: 100svh;
@@ -34,20 +38,14 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-primary: 255 255 255;
-    --color-contrast: 15 15 15;
-    --color-accent: 239 68 68;
-  }
-}
-
 @keyframes fadeInAnimation {
   0% {
     opacity: 0;
+    transform: translateY(12px) scale(0.98);
   }
   100% {
     opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -60,12 +58,12 @@
   }
 }
 
-@keyframes oscillateSlow {
+@keyframes glowPulse {
   0%, 100% {
-    transform: translateY(0px) rotate(0deg);
+    opacity: 0.45;
   }
   50% {
-    transform: translateY(-15px) rotate(0.5deg);
+    opacity: 0.9;
   }
 }
 
@@ -81,23 +79,58 @@ shop-pay-button {
   }
 
   body {
-    @apply border-primary/10 bg-contrast text-primary/90 antialiased;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: rgb(var(--color-primary));
+    background-color: rgb(var(--color-contrast));
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(255, 122, 173, 0.18), transparent 45%),
+      radial-gradient(circle at 80% 0%, rgba(97, 189, 255, 0.18), transparent 35%),
+      linear-gradient(135deg, rgba(6, 8, 30, 0.95), rgba(8, 10, 26, 0.95));
+    min-height: 100vh;
+    @apply antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(transparent calc(var(--grid-size) - 1px), rgba(255, 255, 255, 0.05) calc(var(--grid-size) - 1px)),
+      linear-gradient(90deg, transparent calc(var(--grid-size) - 1px), rgba(255, 255, 255, 0.05) calc(var(--grid-size) - 1px));
+    background-size: var(--grid-size) var(--grid-size);
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  html,
+  body {
+    scroll-behavior: smooth;
   }
 
   html {
-    scroll-padding-top: 10rem;
+    scroll-padding-top: calc(var(--height-nav) + 1.5rem);
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-weight: 800;
-    letter-spacing: -0.02em;
+  main,
+  header,
+  footer,
+  section {
+    position: relative;
+    z-index: 1;
   }
 
-  model-viewer::part(default-progress-mask) {
-    display: none;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 700;
+    letter-spacing: -0.015em;
   }
 
+  model-viewer::part(default-progress-mask),
   model-viewer::part(default-progress-bar) {
     display: none;
   }
@@ -111,6 +144,7 @@ shop-pay-button {
 
   a.active {
     @apply border-b;
+    border-color: rgb(var(--color-accent));
   }
 
   .prose {
@@ -155,15 +189,44 @@ shop-pay-button {
     }
   }
 
+  .card-image {
+    @apply relative flex items-center justify-center overflow-hidden rounded-[1.5rem] border border-white/5;
+    background: linear-gradient(
+      180deg,
+      rgb(var(--color-surface) / 1) 0%,
+      rgb(var(--color-surface-highlight) / 0.4) 100%
+    );
+    transition: transform 0.35s ease, border-color 0.35s ease;
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      opacity: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(255, 120, 165, 0.45), transparent 60%);
+      transition: opacity 0.35s ease;
+    }
+    img {
+      @apply aspect-[inherit] h-full w-full object-cover;
+    }
+    &:hover {
+      transform: translateY(-4px) scale(1.01);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    &:hover::after {
+      opacity: 1;
+    }
+  }
+
   .swimlane {
-    @apply grid w-full snap-x snap-mandatory scroll-px-6 grid-flow-col justify-start gap-4 overflow-x-scroll px-6 pb-4;
+    @apply grid w-full snap-x snap-mandatory scroll-px-6 grid-flow-col justify-start gap-6 overflow-x-scroll px-4 pb-4;
   }
 }
 
 @layer utilities {
   .fadeIn {
     opacity: 0;
-    animation: fadeInAnimation ease 500ms forwards;
+    animation: fadeInAnimation 500ms ease forwards;
   }
 
   .oscillate {
@@ -171,23 +234,35 @@ shop-pay-button {
     display: inline-block;
   }
 
-  .oscillate-slow {
-    animation: oscillateSlow 4s ease-in-out infinite;
-    display: inline-block;
-  }
-
-  .hero-text {
-    font-weight: 900;
-    font-size: clamp(2.5rem, 8vw, 6rem);
-    line-height: 1.1;
-    letter-spacing: -0.03em;
-  }
-
   .hiddenScroll {
     scrollbar-width: none;
     &::-webkit-scrollbar {
       display: none;
     }
+  }
+
+  .glass-panel {
+    border-radius: var(--section-radius);
+    background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.05),
+        rgba(255, 255, 255, 0)
+      ),
+      rgba(13, 17, 41, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--panel-shadow, 0 30px 70px rgba(3, 4, 19, 0.55));
+    backdrop-filter: blur(24px);
+  }
+
+  .tag-chip {
+    @apply inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[0.75rem] uppercase tracking-[0.2em] text-primary/70;
+  }
+
+  .hero-text {
+    font-weight: 700;
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
   }
 
   .absolute-center {
@@ -206,22 +281,7 @@ shop-pay-button {
       top: 50%;
       transform: translateY(-50%);
       background: rgb(var(--color-primary));
-      box-shadow: 0.5px 0.5px 0px 0.5px rgb(var(--color-contrast));
-    }
-  }
-
-  .card-image {
-    @apply relative flex items-center justify-center overflow-clip rounded-lg;
-    transition: transform 0.3s ease;
-    &::before {
-      content: ' ';
-      @apply absolute top-0 left-0 z-10 block h-full w-full rounded-lg shadow-border;
-    }
-    img {
-      @apply aspect-[inherit] w-full object-cover;
-    }
-    &:hover {
-      transform: scale(1.02);
+      box-shadow: 0px 0px 6px rgba(255, 255, 255, 0.35);
     }
   }
 }

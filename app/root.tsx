@@ -27,8 +27,8 @@ import appStyles from '~/styles/app.css?url';
 import customFontStyles from '~/styles/custom-font.css?url';
 import resetStyles from '~/styles/reset.css?url';
 import {seoPayload} from '~/lib/seo.server';
-
 import type {Route} from './+types/root';
+
 import {DEFAULT_LOCALE, parseMenu} from './lib/utils';
 
 export type RootLoader = typeof loader;
@@ -51,9 +51,6 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
     return true;
   }
 
-  // Defaulting to no revalidation for root loader data to improve performance.
-  // When using this feature, you risk your UI getting out of sync with your server.
-  // Update the line below if you prefer React Router's default behavior.
   return false;
 };
 
@@ -65,7 +62,6 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
  * link will cause page rendering error "failed to execute 'insertBefore' on 'Node'".
  *
  * This is a workaround until this is fixed in the foundational library.
- * Track progress: https://github.com/remix-run/remix/issues/9242
  */
 export const links: LinksFunction = () => {
   return [

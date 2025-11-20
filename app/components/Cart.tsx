@@ -1,6 +1,7 @@
 import clsx from 'clsx';
-import {useRef} from 'react';
+import {useRef, useEffect, useRef as useRefType} from 'react';
 import useScroll from 'react-use/esm/useScroll';
+import {useFetcher} from 'react-router';
 import {
   flattenConnection,
   CartForm,
@@ -8,7 +9,6 @@ import {
   Money,
   useOptimisticData,
   OptimisticInput,
-  type CartReturn,
 } from '@shopify/hydrogen';
 import type {
   Cart as CartType,
@@ -33,7 +33,7 @@ export function Cart({
 }: {
   layout: Layouts;
   onClose?: () => void;
-  cart: CartReturn | null;
+  cart: CartType | null;
 }) {
   const linesCount = Boolean(cart?.lines?.edges?.length || 0);
 
@@ -82,33 +82,46 @@ function CartDiscounts({
 }: {
   discountCodes: CartType['discountCodes'];
 }) {
-  const codes: string[] =
-    discountCodes
-      ?.filter((discount) => discount.applicable)
-      ?.map(({code}) => code) || [];
+  const fetcher = useFetcher({key: 'discount'});
+  const isApplying = fetcher.state !== 'idle';
+
+  // Show both applicable and non-applicable codes
+  const applicableCodes = discountCodes?.filter((d) => d.applicable) || [];
+  const nonApplicableCodes = discountCodes?.filter((d) => !d.applicable) || [];
 
   return (
     <>
-      {/* Have existing discount, display it with a remove option */}
-      <dl className={codes && codes.length !== 0 ? 'grid' : 'hidden'}>
-        <div className="flex items-center justify-between font-medium">
-          <Text as="dt">Discount(s)</Text>
-          <div className="flex items-center justify-between">
-            <UpdateDiscountForm>
-              <button>
-                <IconRemove
-                  aria-hidden="true"
-                  style={{height: 18, marginRight: 4}}
-                />
-              </button>
-            </UpdateDiscountForm>
-            <Text as="dd">{codes?.join(', ')}</Text>
+      {/* Show applicable discounts */}
+      {applicableCodes.length > 0 && (
+        <dl className="grid gap-2">
+          <div className="flex items-center justify-between font-medium">
+            <Text as="dt">Discount(s)</Text>
+            <div className="flex items-center justify-between gap-2">
+              <UpdateDiscountForm>
+                <button type="submit" aria-label="Remove discount">
+                  <IconRemove
+                    aria-hidden="true"
+                    style={{height: 18, marginRight: 4}}
+                  />
+                </button>
+              </UpdateDiscountForm>
+              <Text as="dd" className="text-green-700">
+                {applicableCodes.map((d) => d.code).join(', ')}
+              </Text>
+            </div>
           </div>
+        </dl>
+      )}
+
+      {/* Show non-applicable discounts as errors */}
+      {nonApplicableCodes.length > 0 && (
+        <div className="text-red-600 text-sm">
+          Invalid discount code(s): {nonApplicableCodes.map((d) => d.code).join(', ')}
         </div>
-      </dl>
+      )}
 
       {/* Show an input to apply a discount */}
-      <UpdateDiscountForm discountCodes={codes}>
+      <UpdateDiscountForm discountCodes={applicableCodes.map((d) => d.code)}>
         <div
           className={clsx(
             'flex',
@@ -120,9 +133,17 @@ function CartDiscounts({
             type="text"
             name="discountCode"
             placeholder="Discount code"
+            disabled={isApplying}
           />
-          <button className="flex justify-end font-medium whitespace-nowrap">
-            Apply Discount
+          <button 
+            type="submit"
+            disabled={isApplying}
+            className={clsx(
+              'flex justify-end font-medium whitespace-nowrap',
+              isApplying && 'opacity-50 cursor-not-allowed'
+            )}
+          >
+            {isApplying ? 'Applying...' : 'Apply Discount'}
           </button>
         </div>
       </UpdateDiscountForm>
@@ -137,6 +158,17 @@ function UpdateDiscountForm({
   discountCodes?: string[];
   children: React.ReactNode;
 }) {
+  const fetcher = useFetcher({key: 'discount'});
+
+  // Show error messages from the action
+  useEffect(() => {
+    if (fetcher.state === 'idle' && fetcher.data?.userErrors?.length) {
+      const errors = fetcher.data.userErrors;
+      const errorMessage = errors.map((e: any) => e.message).join(', ');
+      alert(`Discount code error: ${errorMessage}`);
+    }
+  }, [fetcher.state, fetcher.data]);
+
   return (
     <CartForm
       route="/cart"
@@ -144,6 +176,7 @@ function UpdateDiscountForm({
       inputs={{
         discountCodes: discountCodes || [],
       }}
+      fetcherKey="discount"
     >
       {children}
     </CartForm>

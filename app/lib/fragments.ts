@@ -129,11 +129,11 @@ export const CART_QUERY_FRAGMENT = `#graphql
       phone
     }
     lines(first: $numCartLines) {
-      nodes {
-        ...CartLine
-      }
-      nodes {
-        ...CartLineComponent
+      edges {
+        node {
+          ...CartLine
+          ...CartLineComponent
+        }
       }
     }
     cost {

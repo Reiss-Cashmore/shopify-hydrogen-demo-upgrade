@@ -34,16 +34,16 @@ export function Hero({
     <Link to={`/collections/${handle}`} prefetch="viewport">
       <section
         className={clsx(
-          'relative justify-end flex flex-col w-full',
+          'relative justify-end flex flex-col w-full overflow-hidden',
           top && '-mt-nav',
           height === 'full'
             ? 'h-screen'
             : 'aspect-[4/5] sm:aspect-square md:aspect-[5/4] lg:aspect-[3/2] xl:aspect-[2/1]',
         )}
       >
-        <div className="absolute inset-0 grid flex-grow grid-flow-col pointer-events-none auto-cols-fr -z-10 content-stretch overflow-clip">
+        <div className="absolute inset-0 grid flex-grow grid-flow-col pointer-events-none auto-cols-fr -z-10 content-stretch">
           {spread?.reference && (
-            <div>
+            <div className="h-full w-full">
               <SpreadMedia
                 sizes={
                   spreadSecondary?.reference
@@ -56,7 +56,7 @@ export function Hero({
             </div>
           )}
           {spreadSecondary?.reference && (
-            <div className="hidden md:block">
+            <div className="hidden md:block h-full w-full">
               <SpreadMedia
                 sizes="50vw"
                 data={spreadSecondary.reference as Media}
@@ -65,7 +65,7 @@ export function Hero({
             </div>
           )}
         </div>
-        <div className="flex flex-col items-baseline justify-between gap-4 px-6 py-8 sm:px-8 md:px-12 bg-gradient-to-t dark:from-contrast/60 dark:text-primary from-primary/60 text-contrast">
+        <div className="absolute inset-x-0 bottom-0 flex flex-col items-baseline justify-between gap-4 px-6 py-8 sm:px-8 md:px-12 bg-gradient-to-t dark:from-contrast/60 dark:text-primary from-primary/60 text-contrast leading-none">
           {heading?.value && (
             <Heading format as="h2" size="display" className="max-w-md">
               {heading.value}
@@ -93,7 +93,7 @@ function SpreadMedia({data, loading, sizes}: SpreadMediaProps) {
   return (
     <MediaFile
       data={data}
-      className="block object-cover w-full h-full"
+      className="block object-cover w-full h-full align-bottom leading-none"
       mediaOptions={{
         video: {
           controls: false,

@@ -15,6 +15,12 @@ export default defineConfig({
     optimizeDeps: {
       include: ['typographic-base'],
     },
+    noExternal: [
+      '@headlessui/react',
+      /^@headlessui\/react\//,
+      'use-sync-external-store',
+      /^use-sync-external-store\//,
+    ],
   },
   optimizeDeps: {
     include: [

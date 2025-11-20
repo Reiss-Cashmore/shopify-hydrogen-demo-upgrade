@@ -1,9 +1,9 @@
-import {type RouteConfig} from '@react-router/dev/routes';
 import {flatRoutes} from '@react-router/fs-routes';
+import type {RouteConfig} from '@react-router/dev/routes';
 import {hydrogenRoutes} from '@shopify/hydrogen';
 
-export default (async () => {
-  const routes = await flatRoutes();
-  return hydrogenRoutes(routes);
-})() satisfies Promise<RouteConfig>;
+export default hydrogenRoutes([
+  ...(await flatRoutes()),
+  // Add manual routes here if needed.
+]) satisfies RouteConfig;
 

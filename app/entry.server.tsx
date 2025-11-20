@@ -1,40 +1,38 @@
-import type {AppLoadContext, EntryContext} from 'react-router';
+import type {EntryContext} from 'react-router';
 import {ServerRouter} from 'react-router';
 import {isbot} from 'isbot';
 import {renderToReadableStream} from 'react-dom/server';
-import {createContentSecurityPolicy} from '@shopify/hydrogen';
+import {
+  createContentSecurityPolicy,
+  type HydrogenRouterContextProvider,
+} from '@shopify/hydrogen';
 
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  routerContext: EntryContext,
-  context: AppLoadContext,
+  reactRouterContext: EntryContext,
+  context: HydrogenRouterContextProvider,
 ) {
   const {nonce, header, NonceProvider} = createContentSecurityPolicy({
     shop: {
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
-    scriptSrc: [
-      'self',
-      'https://cdn.shopify.com',
-      'https://shopify.com',
-      'https://www.google-analytics.com',
-      'https://www.googletagmanager.com',
-      ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
-    ],
   });
 
   const body = await renderToReadableStream(
     <NonceProvider>
-      <ServerRouter context={routerContext} url={request.url} nonce={nonce} />
+      <ServerRouter
+        context={reactRouterContext}
+        url={request.url}
+        nonce={nonce}
+      />
     </NonceProvider>,
     {
       nonce,
       signal: request.signal,
       onError(error) {
-        // eslint-disable-next-line no-console
         console.error(error);
         responseStatusCode = 500;
       },

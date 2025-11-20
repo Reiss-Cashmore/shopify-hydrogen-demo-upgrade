@@ -1,7 +1,7 @@
 import {storefrontRedirect} from '@shopify/hydrogen';
 import {createRequestHandler} from '@shopify/hydrogen/oxygen';
 
-import {createHydrogenRouterContext} from '~/lib/context.server';
+import {createHydrogenRouterContext} from '~/lib/context';
 
 /**
  * Export a fetch handler in module format.
@@ -25,7 +25,7 @@ export default {
         getLoadContext: () => hydrogenContext,
       });
 
-      let response = await handleRequest(request);
+      const response = await handleRequest(request);
 
       if (hydrogenContext.session.isPending) {
         response.headers.set(
@@ -35,7 +35,12 @@ export default {
       }
 
       if (response.status === 404) {
-        response = await storefrontRedirect({
+        /**
+         * Check for redirects only when there's a 404 from the app.
+         * If the redirect doesn't exist, then `storefrontRedirect`
+         * will pass through the 404 response.
+         */
+        return storefrontRedirect({
           request,
           response,
           storefront: hydrogenContext.storefront,
@@ -44,9 +49,9 @@ export default {
 
       return response;
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error(error);
       return new Response('An unexpected error occurred', {status: 500});
     }
   },
 };
+

@@ -1,6 +1,16 @@
 {
-  "include": ["./**/*.d.ts", "./**/*.ts", "./**/*.tsx", ".react-router/types/**/*"],
-  "exclude": ["node_modules", "dist", "playwright.config.ts"],
+  "include": [
+    "env.d.ts",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "app/**/*.d.ts",
+    "*.ts",
+    "*.tsx",
+    "*.d.ts",
+    ".graphqlrc.ts",
+    ".react-router/types/**/*"
+  ],
+  "exclude": ["node_modules", "dist", "build", "packages/**/dist/**/*"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "isolatedModules": true,
@@ -15,11 +25,20 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "baseUrl": ".",
-    "types": ["@shopify/oxygen-workers-types", "@react-router/node"],
+    "types": [
+      "@shopify/oxygen-workers-types",
+      "react-router",
+      "@shopify/hydrogen/react-router-types",
+      "vite/client"
+    ],
     "paths": {
       "~/*": ["app/*"]
     },
+    "noEmit": true,
     "rootDirs": [".", "./.react-router/types"],
-    "noEmit": true
+    "incremental": true,
+    "composite": false,
+    "verbatimModuleSyntax": true
   }
 }
+

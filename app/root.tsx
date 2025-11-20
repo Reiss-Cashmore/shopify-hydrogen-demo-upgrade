@@ -23,8 +23,10 @@ import {PageLayout} from '~/components/PageLayout';
 import {GenericError} from '~/components/GenericError';
 import {NotFound} from '~/components/NotFound';
 import favicon from '~/assets/favicon.svg';
+import appStyles from '~/styles/app.css?url';
+import customFontStyles from '~/styles/custom-font.css?url';
+import resetStyles from '~/styles/reset.css?url';
 import {seoPayload} from '~/lib/seo.server';
-import styles from '~/styles/app.css?url';
 
 import type {Route} from './+types/root';
 import {DEFAULT_LOCALE, parseMenu} from './lib/utils';
@@ -49,6 +51,9 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
     return true;
   }
 
+  // Defaulting to no revalidation for root loader data to improve performance.
+  // When using this feature, you risk your UI getting out of sync with your server.
+  // Update the line below if you prefer React Router's default behavior.
   return false;
 };
 
@@ -60,6 +65,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
  * link will cause page rendering error "failed to execute 'insertBefore' on 'Node'".
  *
  * This is a workaround until this is fixed in the foundational library.
+ * Track progress: https://github.com/remix-run/remix/issues/9242
  */
 export const links: LinksFunction = () => {
   return [
@@ -113,8 +119,10 @@ async function loadCriticalData({request, context}: LoaderArgs) {
       checkoutDomain: env.PUBLIC_CHECKOUT_DOMAIN,
       storefrontAccessToken: env.PUBLIC_STOREFRONT_API_TOKEN,
       withPrivacyBanner: true,
+      country: storefront.i18n.country,
+      language: storefront.i18n.language,
     },
-    selectedLocale: storefront.i18n,
+    selectedLocale: storefront.i18n ?? DEFAULT_LOCALE,
   };
 }
 
@@ -147,7 +155,9 @@ function Layout({children}: {children?: React.ReactNode}) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <meta name="msvalidate.01" content="A352E6A0AF9A652267361BBB572B8468" />
-        <link rel="stylesheet" href={styles}></link>
+        <link rel="stylesheet" href={resetStyles}></link>
+        <link rel="stylesheet" href={customFontStyles}></link>
+        <link rel="stylesheet" href={appStyles}></link>
         <Meta />
         <Links />
       </head>

@@ -1,0 +1,37 @@
+import {useEffect} from 'react';
+import {useFetcher} from 'react-router';
+
+import {usePrefixPathWithLocale} from '~/lib/utils';
+// TODO: Re-enable when featured-products route is migrated
+// import type {FeaturedData} from '~/routes/($locale).featured-products';
+
+import {FeaturedCollections} from './FeaturedCollections';
+import {ProductSwimlane} from './ProductSwimlane';
+
+type FeaturedData = any; // Temporary type until route is migrated
+
+export function FeaturedSection() {
+  const {load, data} = useFetcher<FeaturedData>();
+  const path = usePrefixPathWithLocale('/featured-products');
+
+  useEffect(() => {
+    load(path);
+  }, [load, path]);
+
+  if (!data) return null;
+
+  const {featuredCollections, featuredProducts} = data;
+
+  return (
+    <>
+      {featuredCollections.nodes.length < 2 && (
+        <FeaturedCollections
+          title="Popular Collections"
+          collections={featuredCollections}
+        />
+      )}
+      <ProductSwimlane products={featuredProducts} />
+    </>
+  );
+}
+

@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import type {CartBuyerIdentityInput} from '@shopify/hydrogen/storefront-api-types';
 import {CartForm} from '@shopify/hydrogen';
 
-import {Button} from '~/components/Button';
 import {Heading} from '~/components/Text';
 import {IconCheck} from '~/components/Icon';
 import type {Localizations, Locale} from '~/lib/type';
@@ -52,20 +51,24 @@ export function CountrySelector() {
   return (
     <section
       ref={observerRef}
-      className="grid w-full gap-4"
+      className="grid w-full gap-4 text-primary"
     >
-      <Heading size="lead" className="cursor-default" as="h3">
+      <Heading
+        size="copy"
+        className="cursor-default text-[0.75rem] uppercase tracking-[0.45em] text-primary/60"
+        as="h3"
+      >
         Country
       </Heading>
       <div className="relative">
         <details
-          className="relative w-full rounded-xl border border-primary/40 bg-primary text-contrast shadow-lg"
+          className="relative w-full overflow-hidden rounded-2xl border border-white/15 bg-white/5 text-primary shadow-glow"
           ref={closeRef}
         >
-          <summary className="flex items-center justify-between w-full px-4 py-3 cursor-pointer bg-primary text-contrast">
+          <summary className="flex items-center justify-between w-full cursor-pointer px-5 py-4 text-[0.75rem] uppercase tracking-[0.45em] text-primary/70">
             {selectedLocale.label}
           </summary>
-          <div className="w-full overflow-auto border-t border-primary/30 bg-primary text-contrast max-h-48">
+          <div className="max-h-60 w-full overflow-auto border-t border-white/10 bg-surface/80 text-primary">
             {countries &&
               Object.keys(countries).map((countryPath) => {
                 const countryLocale = countries[countryPath];
@@ -115,23 +118,21 @@ function Country({
         countryCode: countryLocale.country,
       }}
     >
-      <Button
-        className={clsx([
-          'text-contrast dark:text-primary',
-          'bg-primary dark:bg-contrast w-full p-2 transition rounded flex justify-start',
-          'items-center text-left cursor-pointer py-2 px-4 hover:bg-primary/90 dark:hover:bg-contrast/90',
-        ])}
+      <button
+        className={clsx(
+          'flex w-full items-center justify-between border border-transparent px-4 py-3 text-left text-sm text-primary/80 transition hover:border-white/30',
+          isSelected && 'border-white/40 text-primary',
+        )}
         type="submit"
-        variant="primary"
         onClick={closeDropdown}
       >
-        {countryLocale.label}
+        <span>{countryLocale.label}</span>
         {isSelected ? (
-          <span className="ml-2">
+          <span className="ml-2 text-accent">
             <IconCheck />
           </span>
         ) : null}
-      </Button>
+      </button>
     </ChangeLocaleForm>
   );
 }

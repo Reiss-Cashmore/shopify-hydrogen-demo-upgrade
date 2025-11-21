@@ -22,17 +22,17 @@ export function Text({
   [key: string]: any;
 }) {
   const colors: Record<string, string> = {
-    default: 'inherit',
-    primary: 'text-primary/90',
-    subtle: 'text-primary/50',
-    notice: 'text-notice',
-    contrast: 'text-contrast/90',
+    default: 'text-primary',
+    primary: 'text-primary',
+    subtle: 'text-primary/70',
+    notice: 'text-accent',
+    contrast: 'text-contrast',
   };
 
   const sizes: Record<string, string> = {
-    lead: 'text-lead font-medium',
+    lead: 'text-lead font-semibold tracking-tight',
     copy: 'text-copy',
-    fine: 'text-fine subpixel-antialiased',
+    fine: 'text-fine subpixel-antialiased uppercase tracking-[0.2em]',
   };
 
   const widths: Record<string, string> = {
@@ -72,9 +72,9 @@ export function Heading({
   width?: 'default' | 'narrow' | 'wide';
 } & React.HTMLAttributes<HTMLHeadingElement>) {
   const sizes = {
-    display: 'font-black text-display tracking-tighter',
-    heading: 'font-extrabold text-heading tracking-tight',
-    lead: 'font-bold text-lead tracking-tight',
+    display: 'font-semibold text-display tracking-tight',
+    heading: 'font-semibold text-heading tracking-tight',
+    lead: 'font-semibold text-lead tracking-tight',
     copy: 'font-semibold text-copy',
   };
 
@@ -106,6 +106,7 @@ export function Section({
   display = 'grid',
   heading,
   padding = 'all',
+  variant = 'panel',
   ...props
 }: {
   as?: React.ElementType;
@@ -115,20 +116,21 @@ export function Section({
   display?: 'grid' | 'flex';
   heading?: string;
   padding?: 'x' | 'y' | 'swimlane' | 'all';
+  variant?: 'panel' | 'plain';
   [key: string]: any;
 }) {
   const paddings = {
-    x: 'px-6 md:px-8 lg:px-12',
-    y: 'py-6 md:py-8 lg:py-12',
-    swimlane: 'pt-4 md:pt-8 lg:pt-12 md:pb-4 lg:pb-8',
-    all: 'p-6 md:p-8 lg:p-12',
+    x: 'px-5 md:px-10',
+    y: 'py-6 md:py-10',
+    swimlane: 'pt-4 md:pt-8 lg:pt-10 md:pb-4 lg:pb-8',
+    all: 'p-5 md:p-10',
   };
 
   const dividers = {
     none: 'border-none',
-    top: 'border-t border-primary/05',
-    bottom: 'border-b border-primary/05',
-    both: 'border-y border-primary/05',
+    top: 'border-t border-white/5',
+    bottom: 'border-b border-white/5',
+    both: 'border-y border-white/5',
   };
 
   const displays = {
@@ -136,9 +138,15 @@ export function Section({
     grid: 'grid',
   };
 
+  const variants = {
+    panel: 'glass-panel rounded-[1.75rem]',
+    plain: '',
+  };
+
   const styles = clsx(
-    'w-full gap-4 md:gap-8',
+    'w-full gap-6 md:gap-10',
     displays[display],
+    variants[variant],
     missingClass(className, '\\mp[xy]?-') && paddings[padding],
     dividers[divider],
     className,

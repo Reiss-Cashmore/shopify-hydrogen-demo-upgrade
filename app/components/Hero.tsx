@@ -34,14 +34,14 @@ export function Hero({
     <Link to={`/collections/${handle}`} prefetch="viewport">
       <section
         className={clsx(
-          'relative justify-end flex flex-col w-full overflow-hidden',
+          'relative flex w-full flex-col overflow-hidden rounded-[2.5rem] border border-white/10 bg-surface/80 shadow-glow',
           top && '-mt-nav',
           height === 'full'
             ? 'h-screen'
-            : 'aspect-[4/5] sm:aspect-square md:aspect-[5/4] lg:aspect-[3/2] xl:aspect-[2/1]',
+            : 'aspect-[4/5] sm:aspect-[3/2] lg:min-h-[28rem]',
         )}
       >
-        <div className="absolute inset-0 grid flex-grow grid-flow-col pointer-events-none auto-cols-fr -z-10 content-stretch">
+        <div className="absolute inset-0 -z-10 grid flex-grow grid-flow-col pointer-events-none auto-cols-fr content-stretch">
           {spread?.reference && (
             <div className="h-full w-full">
               <SpreadMedia
@@ -65,19 +65,38 @@ export function Hero({
             </div>
           )}
         </div>
-              <div className="absolute inset-x-0 bottom-0 flex flex-col items-baseline justify-between gap-4 px-6 py-8 sm:px-8 md:px-12 bg-gradient-to-t dark:from-contrast/60 dark:text-primary from-primary/60 text-contrast leading-none">
-                {heading?.value && (
-                  <Heading format as="h2" size="display" className="max-w-md oscillate-slow">
-                    {heading.value}
-                  </Heading>
-                )}
-                {byline?.value && (
-                  <Text format width="narrow" as="p" size="lead">
-                    {byline.value}
-                  </Text>
-                )}
-                {cta?.value && <Text size="lead">{cta.value}</Text>}
-              </div>
+        <div className="absolute inset-0 -z-10 bg-gradient-to-tr from-contrast/70 via-surface/60 to-transparent" />
+        <div className="absolute inset-0 -z-10 opacity-30">
+          <div className="h-full w-full bg-grid-overlay" />
+        </div>
+        <div className="relative flex h-full flex-col justify-between gap-6 px-6 py-8 text-primary sm:px-10 md:px-14">
+          <div className="flex flex-col gap-4">
+            <span className="tag-chip bg-white/10 text-[0.7rem]">
+              {cta?.value ?? 'Featured Collection'}
+            </span>
+            {heading?.value && (
+              <Heading
+                format
+                as="h2"
+                size="display"
+                className="max-w-2xl text-contrast drop-shadow-[0_15px_45px_rgba(0,0,0,0.45)]"
+              >
+                {heading.value}
+              </Heading>
+            )}
+            {byline?.value && (
+              <Text
+                format
+                width="narrow"
+                as="p"
+                size="lead"
+                className="text-primary/80"
+              >
+                {byline.value}
+              </Text>
+            )}
+          </div>
+        </div>
       </section>
     </Link>
   );

@@ -26,8 +26,8 @@ export function FeaturedCollections({
         {collectionsWithImage.map((collection) => {
           return (
             <Link key={collection.id} to={`/collections/${collection.handle}`}>
-              <div className="grid gap-3 rounded-2xl border border-white/10 p-4 transition hover:-translate-y-1 hover:border-white/25">
-                <div className="card-image aspect-[3/2] rounded-xl">
+              <div className="grid gap-4">
+                <div className="card-image bg-primary/5 aspect-[3/2]">
                   {collection?.image && (
                     <Image
                       alt={`Image of ${collection.title}`}
@@ -37,7 +37,7 @@ export function FeaturedCollections({
                     />
                   )}
                 </div>
-                <Heading size="copy" className="text-primary/80">
+                <Heading size="copy" className="font-bold text-primary">
                   {collection.title}
                 </Heading>
               </div>

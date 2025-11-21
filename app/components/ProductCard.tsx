@@ -46,14 +46,14 @@ export function ProductCard({
   }
 
   return (
-    <div className="group glass-panel flex flex-col gap-3 rounded-[1.5rem] border border-white/10 p-4 transition hover:-translate-y-1 hover:border-white/30">
+    <div className="group flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5/10 p-4 transition hover:-translate-y-1 hover:border-white/25">
       <Link
         onClick={onClick}
         to={`/products/${product.handle}`}
         prefetch="viewport"
       >
         <div className={clsx('grid gap-4', className)}>
-          <div className="card-image aspect-[4/5]">
+          <div className="card-image aspect-[4/5] rounded-2xl">
             {image && (
               <Image
                 className="object-cover w-full fadeIn"
@@ -67,20 +67,20 @@ export function ProductCard({
             <Text
               as="label"
               size="fine"
-              className="tag-chip absolute right-4 top-4 bg-white/10 text-[0.65rem]"
+              className="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-[0.7rem] font-medium uppercase tracking-widest text-contrast/90"
             >
               {cardLabel}
             </Text>
           </div>
           <div className="grid gap-2">
-            <Text className="w-full overflow-hidden whitespace-nowrap text-ellipsis text-[0.9rem] uppercase tracking-[0.35em] text-primary/70">
+            <Text className="w-full overflow-hidden whitespace-nowrap text-ellipsis text-base font-semibold text-primary">
               {product.title}
             </Text>
-            <div className="flex items-center gap-3 text-lg font-semibold">
+            <div className="flex items-baseline gap-3 text-lg font-semibold text-primary">
               <Money withoutTrailingZeros data={price!} />
               {isDiscounted(price as MoneyV2, compareAtPrice as MoneyV2) && (
                 <CompareAtPrice
-                  className="opacity-50 text-[0.9rem]"
+                  className="text-sm font-medium text-primary/60 line-through"
                   data={compareAtPrice as MoneyV2}
                 />
               )}

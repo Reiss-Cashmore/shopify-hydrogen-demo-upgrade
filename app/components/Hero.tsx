@@ -9,6 +9,7 @@ import type {
 import type {CollectionContentFragment} from 'storefrontapi.generated';
 import {Heading, Text} from '~/components/Text';
 import {Link} from '~/components/Link';
+import {Button} from '~/components/Button';
 
 type HeroProps = CollectionContentFragment & {
   height?: 'full';
@@ -30,12 +31,14 @@ export function Hero({
   spreadSecondary,
   top,
 }: HeroProps) {
+  const topSpacing = top ? 'mt-6' : '';
+
   return (
     <Link to={`/collections/${handle}`} prefetch="viewport">
       <section
         className={clsx(
           'relative flex w-full flex-col overflow-hidden rounded-[2.5rem] border border-white/10 bg-surface/80 shadow-glow',
-          top && '-mt-nav',
+          topSpacing,
           height === 'full'
             ? 'h-screen'
             : 'aspect-[4/5] sm:aspect-[3/2] lg:min-h-[28rem]',
@@ -71,9 +74,6 @@ export function Hero({
         </div>
         <div className="relative flex h-full flex-col justify-between gap-6 px-6 py-8 text-primary sm:px-10 md:px-14">
           <div className="flex flex-col gap-4">
-            <span className="tag-chip bg-white/10 text-[0.7rem]">
-              {cta?.value ?? 'Featured Collection'}
-            </span>
             {heading?.value && (
               <Heading
                 format
@@ -95,6 +95,14 @@ export function Hero({
                 {byline.value}
               </Text>
             )}
+          </div>
+          <div className="flex flex-wrap items-center gap-4">
+            <Button as="span" variant="primary" width="auto">
+              {cta?.value ?? 'Shop now'}
+            </Button>
+            <Text size="fine" className="text-primary/70">
+              Explore the generator presets
+            </Text>
           </div>
         </div>
       </section>

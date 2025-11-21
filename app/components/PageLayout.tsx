@@ -211,7 +211,7 @@ function MobileHeader({
       <Form
         method="get"
         action={params.locale ? `/${params.locale}/search` : '/search'}
-        className="flex w-full items-center gap-3"
+        className="mb-2 flex w-full items-center gap-3"
       >
         <button
           type="submit"
@@ -281,7 +281,7 @@ function DesktopHeader({
         <Form
           method="get"
           action={params.locale ? `/${params.locale}/search` : '/search'}
-          className="hidden xl:flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-4 py-2"
+          className="hidden lg:flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-4 py-2"
         >
           <Input
             type="search"
@@ -377,11 +377,13 @@ function Footer({menu}: {menu?: EnhancedMenu}) {
 
   return (
     <footer className="mt-16 border-t border-white/10 pt-12 text-primary/80">
-      <div className={`${LAYOUT_CONTAINER} flex flex-col gap-10 lg:flex-row`}>
-        <div className="grid flex-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div
+        className={`${LAYOUT_CONTAINER} grid gap-10 lg:grid-cols-[2fr_1fr]`}
+      >
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           <FooterMenu menu={menu} />
         </div>
-        <div className="glass-panel w-full max-w-sm rounded-[1.5rem] border border-white/10 p-6">
+        <div className="glass-panel w-full rounded-[1.5rem] border border-white/10 p-6">
           <Heading
             size="copy"
             className="mb-4 text-[0.75rem] uppercase tracking-[0.45em] text-primary/60"
@@ -403,8 +405,7 @@ function Footer({menu}: {menu?: EnhancedMenu}) {
 }
 
 function FooterLink({item}: {item: ChildEnhancedMenuItem}) {
-  const linkClasses =
-    'text-sm text-primary/60 transition hover:text-primary';
+  const linkClasses = 'text-sm text-primary/70 transition hover:text-primary';
 
   if (item.to.startsWith('http')) {
     return (
@@ -434,7 +435,7 @@ function FooterLink({item}: {item: ChildEnhancedMenuItem}) {
 function FooterMenu({menu}: {menu?: EnhancedMenu}) {
   const styles = {
     section: 'flex flex-col gap-3',
-    nav: 'grid gap-2 text-sm text-primary/70',
+    nav: 'grid gap-2 pb-4 text-sm text-primary/70',
   };
 
   return (
@@ -445,7 +446,7 @@ function FooterMenu({menu}: {menu?: EnhancedMenu}) {
             {({open}) => (
               <>
                 <Disclosure.Button className="w-full text-left md:cursor-default">
-                  <Heading size="copy" className="text-sm text-primary">
+                  <Heading size="copy" className="text-sm font-semibold text-primary">
                     {item.title}
                     {item?.items?.length > 0 && (
                       <span className="md:hidden">

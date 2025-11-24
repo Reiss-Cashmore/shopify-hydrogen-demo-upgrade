@@ -1,6 +1,5 @@
 import {useParams, Form, Await, useRouteLoaderData} from 'react-router';
 import useWindowScroll from 'react-use/esm/useWindowScroll';
-import {Disclosure} from '@headlessui/react';
 import {Suspense, useEffect, useMemo} from 'react';
 import {CartForm} from '@shopify/hydrogen';
 
@@ -14,7 +13,6 @@ import {Drawer, useDrawer} from '~/components/Drawer';
 import {CountrySelector} from '~/components/CountrySelector';
 import {
   IconMenu,
-  IconCaret,
   IconLogin,
   IconAccount,
   IconBag,
@@ -28,7 +26,8 @@ import {useIsHydrated} from '~/hooks/useIsHydrated';
 import {useCartFetchers} from '~/hooks/useCartFetchers';
 import type {RootLoader} from '~/root';
 
-const LAYOUT_CONTAINER = 'w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-10';
+const LAYOUT_CONTAINER =
+  'w-full max-w-[120rem] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10';
 const ICON_BUTTON_CLASS =
   'group relative flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-primary transition hover:border-white/40 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40';
 
@@ -189,45 +188,47 @@ function MobileHeader({
   return (
     <header
       role="banner"
-      className={`${LAYOUT_CONTAINER} flex lg:hidden flex-col gap-3 rounded-[1.5rem] border border-white/10 bg-surface/80 text-primary shadow-glow backdrop-blur-2xl sticky top-3 z-40`}
+      className={`${LAYOUT_CONTAINER} lg:hidden sticky top-3 z-40`}
     >
-      <div className="flex w-full items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <button onClick={openMenu} className={ICON_BUTTON_CLASS} aria-label="Open menu">
-            <IconMenu />
-          </button>
-          <Link
-            className="text-[0.75rem] font-semibold uppercase tracking-[0.6em] text-primary/70"
-            to="/"
-          >
-            {title}
-          </Link>
+      <div className="flex w-full flex-col gap-4 rounded-[1.5rem] border border-white/10 bg-surface/80 p-4 text-primary shadow-glow backdrop-blur-2xl sm:p-5">
+        <div className="flex w-full items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <button onClick={openMenu} className={ICON_BUTTON_CLASS} aria-label="Open menu">
+              <IconMenu />
+            </button>
+            <Link
+              className="text-[0.75rem] font-semibold uppercase tracking-[0.6em] text-primary/70"
+              to="/"
+            >
+              {title}
+            </Link>
+          </div>
+          <div className="flex items-center gap-2">
+            <AccountLink className={ICON_BUTTON_CLASS} />
+            <CartCount openCart={openCart} />
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <AccountLink className={ICON_BUTTON_CLASS} />
-          <CartCount openCart={openCart} />
-        </div>
-      </div>
-      <Form
-        method="get"
-        action={params.locale ? `/${params.locale}/search` : '/search'}
-        className="mb-2 flex w-full items-center gap-3"
-      >
-        <button
-          type="submit"
-          className={`${ICON_BUTTON_CLASS} h-12 w-12 rounded-full`}
-          aria-label="Search"
+        <Form
+          method="get"
+          action={params.locale ? `/${params.locale}/search` : '/search'}
+          className="flex w-full items-center gap-3"
         >
-          <IconSearch />
-        </button>
-        <Input
-          type="search"
-          variant="search"
-          placeholder="Search the grid..."
-          name="q"
-          className="flex-1"
-        />
-      </Form>
+          <button
+            type="submit"
+            className={`${ICON_BUTTON_CLASS} h-12 w-12 rounded-full`}
+            aria-label="Search"
+          >
+            <IconSearch />
+          </button>
+          <Input
+            type="search"
+            variant="search"
+            placeholder="Search the grid..."
+            name="q"
+            className="flex-1"
+          />
+        </Form>
+      </div>
     </header>
   );
 }
@@ -244,62 +245,65 @@ function DesktopHeader({
   const params = useParams();
   const {y} = useWindowScroll();
   return (
-    <header
-      role="banner"
-      className={`${LAYOUT_CONTAINER} hidden lg:flex items-center justify-between rounded-[2rem] border border-white/10 bg-surface/80 px-8 py-5 text-primary shadow-glow backdrop-blur-2xl transition-all duration-300 sticky top-6 z-50 ${
-        y > 30 ? 'border-white/30 bg-surface/90' : ''
-      }`}
-    >
-      <div className="flex items-center gap-10">
-        <Link
-          className="text-sm font-semibold uppercase tracking-[0.6em] text-primary/70"
-          to="/"
-          prefetch="intent"
-        >
-          {title}
-        </Link>
-        <nav className="flex items-center gap-6 text-[0.7rem] font-semibold uppercase tracking-[0.4em] text-primary/50">
-          {/* Top level menu items */}
-          {(menu?.items || []).map((item) => (
+    <header role="banner" className="hidden w-full lg:block sticky top-6 z-50">
+      <div
+        className={`w-full rounded-[2rem] border border-white/10 bg-surface/80 py-5 text-primary shadow-glow backdrop-blur-2xl transition-all duration-300 ${
+          y > 30 ? 'border-white/30 bg-surface/90' : ''
+        }`}
+      >
+        <div className={`${LAYOUT_CONTAINER} flex items-center justify-between`}>
+          <div className="flex items-center gap-10">
             <Link
-              key={item.id}
-              to={item.to}
-              target={item.target}
+              className="text-sm font-semibold uppercase tracking-[0.6em] text-primary/70"
+              to="/"
               prefetch="intent"
-              className={({isActive}) =>
-                `${
-                  isActive ? 'text-primary' : 'hover:text-primary/80'
-                } transition-colors`
-              }
             >
-              {item.title}
+              {title}
             </Link>
-          ))}
-        </nav>
-      </div>
-      <div className="flex items-center gap-3">
-        <Form
-          method="get"
-          action={params.locale ? `/${params.locale}/search` : '/search'}
-          className="hidden lg:flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-4 py-2"
-        >
-          <Input
-            type="search"
-            variant="search"
-            placeholder="Search the grid..."
-            name="q"
-            className="w-56 bg-transparent text-sm text-primary placeholder:text-primary/40 focus:border-white/30"
-          />
-          <button
-            type="submit"
-            className={ICON_BUTTON_CLASS}
-            aria-label="Search"
-          >
-            <IconSearch />
-          </button>
-        </Form>
-        <AccountLink className={ICON_BUTTON_CLASS} />
-        <CartCount openCart={openCart} />
+            <nav className="flex items-center gap-6 text-[0.7rem] font-semibold uppercase tracking-[0.4em] text-primary/50 pr-6">
+              {/* Top level menu items */}
+              {(menu?.items || []).map((item) => (
+                <Link
+                  key={item.id}
+                  to={item.to}
+                  target={item.target}
+                  prefetch="intent"
+                  className={({isActive}) =>
+                    `${
+                      isActive ? 'text-primary' : 'hover:text-primary/80'
+                    } transition-colors`
+                  }
+                >
+                  {item.title}
+                </Link>
+              ))}
+            </nav>
+          </div>
+          <div className="flex items-center gap-4">
+            <Form
+              method="get"
+              action={params.locale ? `/${params.locale}/search` : '/search'}
+              className="hidden lg:flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-4 py-2"
+            >
+              <Input
+                type="search"
+                variant="search"
+                placeholder="Search the grid..."
+                name="q"
+                className="w-56 bg-transparent text-sm text-primary placeholder:text-primary/40 focus:border-white/30"
+              />
+              <button
+                type="submit"
+                className={ICON_BUTTON_CLASS}
+                aria-label="Search"
+              >
+                <IconSearch />
+              </button>
+            </Form>
+            <AccountLink className={ICON_BUTTON_CLASS} />
+            <CartCount openCart={openCart} />
+          </div>
+        </div>
       </div>
     </header>
   );
@@ -442,39 +446,16 @@ function FooterMenu({menu}: {menu?: EnhancedMenu}) {
     <>
       {(menu?.items || []).map((item) => (
         <section key={item.id} className={styles.section}>
-          <Disclosure>
-            {({open}) => (
-              <>
-                <Disclosure.Button className="w-full text-left md:cursor-default">
-                  <Heading size="copy" className="text-sm font-semibold text-primary">
-                    {item.title}
-                    {item?.items?.length > 0 && (
-                      <span className="md:hidden">
-                        <IconCaret direction={open ? 'up' : 'down'} />
-                      </span>
-                    )}
-                  </Heading>
-                </Disclosure.Button>
-                {item?.items?.length > 0 ? (
-                  <div
-                    className={`${
-                      open ? `max-h-48 h-fit` : `max-h-0 md:max-h-fit`
-                    } overflow-hidden transition-all duration-300`}
-                  >
-                    <Suspense data-comment="This suspense fixes a hydration bug in Disclosure.Panel with static prop">
-                      <Disclosure.Panel static>
-                        <nav className={styles.nav}>
-                          {item.items.map((subItem: ChildEnhancedMenuItem) => (
-                            <FooterLink key={subItem.id} item={subItem} />
-                          ))}
-                        </nav>
-                      </Disclosure.Panel>
-                    </Suspense>
-                  </div>
-                ) : null}
-              </>
-            )}
-          </Disclosure>
+          <Heading size="copy" className="text-sm font-semibold text-primary">
+            {item.title}
+          </Heading>
+          {item?.items?.length ? (
+            <nav className={styles.nav}>
+              {item.items.map((subItem: ChildEnhancedMenuItem) => (
+                <FooterLink key={subItem.id} item={subItem} />
+              ))}
+            </nav>
+          ) : null}
         </section>
       ))}
     </>

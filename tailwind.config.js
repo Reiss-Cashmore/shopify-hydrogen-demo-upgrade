@@ -9,11 +9,7 @@ const config = {
       colors: {
         primary: 'rgb(var(--color-primary) / <alpha-value>)',
         contrast: 'rgb(var(--color-contrast) / <alpha-value>)',
-        surface: 'rgb(var(--color-surface) / <alpha-value>)',
-        surfaceHighlight: 'rgb(var(--color-surface-highlight) / <alpha-value>)',
-        accent: 'rgb(var(--color-accent) / <alpha-value>)',
         notice: 'rgb(var(--color-accent) / <alpha-value>)',
-        stroke: 'rgb(var(--color-stroke) / <alpha-value>)',
         shopPay: 'rgb(var(--color-shop-pay) / <alpha-value>)',
       },
       screens: {
@@ -43,25 +39,8 @@ const config = {
         mobileGallery: 'calc(100vw - 3rem)',
       },
       fontFamily: {
-        sans: [
-          '"Space Grotesk"',
-          'Inter',
-          'system-ui',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'Segoe UI',
-          'Roboto',
-          'Oxygen',
-          'Ubuntu',
-          'Cantarell',
-          'sans-serif',
-        ],
+        sans: ['Helvetica Neue', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         serif: ['"IBMPlexSerif"', 'Palatino', 'ui-serif'],
-        mono: ['"Space Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
-      },
-      fontWeight: {
-        extrabold: '800',
-        black: '900',
       },
       fontSize: {
         display: ['var(--font-size-display)', '1.1'],
@@ -70,25 +49,14 @@ const config = {
         copy: ['var(--font-size-copy)', '1.5'],
         fine: ['var(--font-size-fine)', '1.333'],
       },
-      letterSpacing: {
-        tighter: '-0.03em',
-      },
       maxWidth: {
         'prose-narrow': '45ch',
         'prose-wide': '80ch',
       },
       boxShadow: {
-        border: 'inset 0px 0px 0px 1px rgb(var(--color-stroke) / 0.35)',
-        darkHeader: 'inset 0px -1px 0px 0px rgba(10, 10, 25, 0.6)',
-        lightHeader: 'inset 0px -1px 0px 0px rgba(242, 242, 255, 0.08)',
-        glow: '0 25px 80px rgba(4, 6, 22, 0.65)',
-        card: '0 20px 50px rgba(5, 6, 20, 0.45)',
-      },
-      backgroundImage: {
-        'mesh-radial':
-          'radial-gradient(circle at 20% 20%, rgba(255, 111, 159, 0.25), transparent 40%), radial-gradient(circle at 80% 0%, rgba(134, 214, 255, 0.22), transparent 35%), radial-gradient(circle at 50% 80%, rgba(255, 94, 129, 0.2), transparent 45%)',
-        'grid-overlay':
-          'linear-gradient(transparent 95%, rgba(255,255,255,0.08) 96%), linear-gradient(90deg, transparent 95%, rgba(255,255,255,0.08) 96%)',
+        border: 'inset 0px 0px 0px 1px rgb(var(--color-primary) / 0.08)',
+        darkHeader: 'inset 0px -1px 0px 0px rgba(21, 21, 21, 0.4)',
+        lightHeader: 'inset 0px -1px 0px 0px rgba(21, 21, 21, 0.05)',
       },
     },
   },

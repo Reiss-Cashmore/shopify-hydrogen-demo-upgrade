@@ -1,11 +1,11 @@
-import {useParams, Form, Await, useRouteLoaderData} from 'react-router';
+import { useParams, Form, Await, useRouteLoaderData } from 'react-router';
 import useWindowScroll from 'react-use/esm/useWindowScroll';
 import {Disclosure} from '@headlessui/react';
 import {Suspense, useEffect, useMemo} from 'react';
 import {CartForm} from '@shopify/hydrogen';
 
 import type {LayoutQuery} from 'storefrontapi.generated';
-import {Text, Heading} from '~/components/Text';
+import {Text, Heading, Section} from '~/components/Text';
 import {Link} from '~/components/Link';
 import {Cart} from '~/components/Cart';
 import {CartLoading} from '~/components/CartLoading';
@@ -23,14 +23,11 @@ import {
 import {
   type EnhancedMenu,
   type ChildEnhancedMenuItem,
+  useIsHomePath,
 } from '~/lib/utils';
 import {useIsHydrated} from '~/hooks/useIsHydrated';
 import {useCartFetchers} from '~/hooks/useCartFetchers';
 import type {RootLoader} from '~/root';
-
-const LAYOUT_CONTAINER = 'w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-10';
-const ICON_BUTTON_CLASS =
-  'group relative flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-primary transition hover:border-white/40 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -45,16 +42,16 @@ export function PageLayout({children, layout}: LayoutProps) {
   return (
     <>
       <div className="flex flex-col min-h-screen">
-        <a href="#mainContent" className="sr-only">
-          Skip to content
-        </a>
+        <div className="">
+          <a href="#mainContent" className="sr-only">
+            Skip to content
+          </a>
+        </div>
         {headerMenu && layout?.shop.name && (
           <Header title={layout.shop.name} menu={headerMenu} />
         )}
-        <main role="main" id="mainContent" className="flex-grow w-full py-4">
-          <div className={`${LAYOUT_CONTAINER} flex flex-col gap-10 pb-16 pt-6`}>
-            {children}
-          </div>
+        <main role="main" id="mainContent" className="flex-grow">
+          {children}
         </main>
       </div>
       {footerMenu && <Footer menu={footerMenu} />}
@@ -63,6 +60,8 @@ export function PageLayout({children, layout}: LayoutProps) {
 }
 
 function Header({title, menu}: {title: string; menu?: EnhancedMenu}) {
+  const isHome = useIsHomePath();
+
   const {
     isOpen: isCartOpen,
     openDrawer: openCart,
@@ -90,11 +89,13 @@ function Header({title, menu}: {title: string; menu?: EnhancedMenu}) {
         <MenuDrawer isOpen={isMenuOpen} onClose={closeMenu} menu={menu} />
       )}
       <DesktopHeader
+        isHome={isHome}
         title={title}
         menu={menu}
         openCart={openCart}
       />
       <MobileHeader
+        isHome={isHome}
         title={title}
         openCart={openCart}
         openMenu={openMenu}
@@ -146,7 +147,7 @@ function MenuMobileNav({
   onClose: () => void;
 }) {
   return (
-    <nav className="grid gap-4 p-6 text-primary/80 sm:gap-6 sm:px-10 sm:py-8">
+    <nav className="grid gap-4 p-6 sm:gap-6 sm:px-12 sm:py-8">
       {/* Top level menu items */}
       {(menu?.items || []).map((item) => (
         <span key={item.id} className="block">
@@ -155,17 +156,12 @@ function MenuMobileNav({
             target={item.target}
             onClick={onClose}
             className={({isActive}) =>
-              `${
-                isActive
-                  ? 'border-accent/60 text-primary'
-                  : 'border-white/10 text-primary/70 hover:border-white/30'
-              } flex items-center justify-between rounded-2xl border bg-white/5 px-4 py-3 text-sm font-semibold uppercase tracking-[0.3em] transition`
+              isActive ? 'pb-1 border-b -mb-px' : 'pb-1'
             }
           >
-            <Text as="span" size="fine" className="tracking-[0.4em]">
+            <Text as="span" size="copy">
               {item.title}
             </Text>
-            <span className="text-primary/40">&rsaquo;</span>
           </Link>
         </span>
       ))}
@@ -175,10 +171,12 @@ function MenuMobileNav({
 
 function MobileHeader({
   title,
+  isHome,
   openCart,
   openMenu,
 }: {
   title: string;
+  isHome: boolean;
   openCart: () => void;
   openMenu: () => void;
 }) {
@@ -189,54 +187,71 @@ function MobileHeader({
   return (
     <header
       role="banner"
-      className={`${LAYOUT_CONTAINER} flex lg:hidden flex-col gap-3 rounded-[1.5rem] border border-white/10 bg-surface/80 text-primary shadow-glow backdrop-blur-2xl sticky top-3 z-40`}
+      className={`${
+        isHome
+          ? 'bg-primary/80 dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader'
+          : 'bg-contrast/80 text-primary'
+      } flex lg:hidden items-center h-nav sticky backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-4 px-4 md:px-8`}
     >
-      <div className="flex w-full items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <button onClick={openMenu} className={ICON_BUTTON_CLASS} aria-label="Open menu">
-            <IconMenu />
-          </button>
-          <Link
-            className="text-[0.75rem] font-semibold uppercase tracking-[0.6em] text-primary/70"
-            to="/"
-          >
-            {title}
-          </Link>
-        </div>
-        <div className="flex items-center gap-2">
-          <AccountLink className={ICON_BUTTON_CLASS} />
-          <CartCount openCart={openCart} />
-        </div>
-      </div>
-      <Form
-        method="get"
-        action={params.locale ? `/${params.locale}/search` : '/search'}
-        className="mb-2 flex w-full items-center gap-3"
-      >
+      <div className="flex items-center justify-start w-full gap-4">
         <button
-          type="submit"
-          className={`${ICON_BUTTON_CLASS} h-12 w-12 rounded-full`}
-          aria-label="Search"
+          onClick={openMenu}
+          className="relative flex items-center justify-center w-8 h-8"
         >
-          <IconSearch />
+          <IconMenu />
         </button>
-        <Input
-          type="search"
-          variant="search"
-          placeholder="Search the grid..."
-          name="q"
-          className="flex-1"
-        />
-      </Form>
+        <Form
+          method="get"
+          action={params.locale ? `/${params.locale}/search` : '/search'}
+          className="items-center gap-2 sm:flex"
+        >
+          <button
+            type="submit"
+            className="relative flex items-center justify-center w-8 h-8"
+          >
+            <IconSearch />
+          </button>
+          <Input
+            className={
+              isHome
+                ? 'focus:border-contrast/20 dark:focus:border-primary/20'
+                : 'focus:border-primary/20'
+            }
+            type="search"
+            variant="minisearch"
+            placeholder="Search"
+            name="q"
+          />
+        </Form>
+      </div>
+
+      <Link
+        className="flex items-center self-stretch leading-[3rem] md:leading-[4rem] justify-center flex-grow w-full h-full"
+        to="/"
+      >
+        <Heading
+          className="font-bold text-center leading-none"
+          as={isHome ? 'h1' : 'h2'}
+        >
+          {title}
+        </Heading>
+      </Link>
+
+      <div className="flex items-center justify-end w-full gap-4">
+        <AccountLink className="relative flex items-center justify-center w-8 h-8" />
+        <CartCount isHome={isHome} openCart={openCart} />
+      </div>
     </header>
   );
 }
 
 function DesktopHeader({
+  isHome,
   menu,
   openCart,
   title,
 }: {
+  isHome: boolean;
   openCart: () => void;
   menu?: EnhancedMenu;
   title: string;
@@ -246,19 +261,19 @@ function DesktopHeader({
   return (
     <header
       role="banner"
-      className={`${LAYOUT_CONTAINER} hidden lg:flex items-center justify-between rounded-[2rem] border border-white/10 bg-surface/80 px-8 py-5 text-primary shadow-glow backdrop-blur-2xl transition-all duration-300 sticky top-6 z-50 ${
-        y > 30 ? 'border-white/30 bg-surface/90' : ''
-      }`}
+      className={`${
+        isHome
+          ? 'bg-primary/80 dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader'
+          : 'bg-contrast/80 text-primary'
+      } ${
+        !isHome && y > 50 && ' shadow-lightHeader'
+      } hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-8 px-12 py-8`}
     >
-      <div className="flex items-center gap-10">
-        <Link
-          className="text-sm font-semibold uppercase tracking-[0.6em] text-primary/70"
-          to="/"
-          prefetch="intent"
-        >
+      <div className="flex gap-12">
+        <Link className="font-bold" to="/" prefetch="intent">
           {title}
         </Link>
-        <nav className="flex items-center gap-6 text-[0.7rem] font-semibold uppercase tracking-[0.4em] text-primary/50">
+        <nav className="flex gap-8">
           {/* Top level menu items */}
           {(menu?.items || []).map((item) => (
             <Link
@@ -267,9 +282,7 @@ function DesktopHeader({
               target={item.target}
               prefetch="intent"
               className={({isActive}) =>
-                `${
-                  isActive ? 'text-primary' : 'hover:text-primary/80'
-                } transition-colors`
+                isActive ? 'pb-1 border-b -mb-px' : 'pb-1'
               }
             >
               {item.title}
@@ -277,29 +290,32 @@ function DesktopHeader({
           ))}
         </nav>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1">
         <Form
           method="get"
           action={params.locale ? `/${params.locale}/search` : '/search'}
-          className="hidden lg:flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-4 py-2"
+          className="flex items-center gap-2"
         >
           <Input
+            className={
+              isHome
+                ? 'focus:border-contrast/20 dark:focus:border-primary/20'
+                : 'focus:border-primary/20'
+            }
             type="search"
-            variant="search"
-            placeholder="Search the grid..."
+            variant="minisearch"
+            placeholder="Search"
             name="q"
-            className="w-56 bg-transparent text-sm text-primary placeholder:text-primary/40 focus:border-white/30"
           />
           <button
             type="submit"
-            className={ICON_BUTTON_CLASS}
-            aria-label="Search"
+            className="relative flex items-center justify-center w-8 h-8 focus:ring-primary/5"
           >
             <IconSearch />
           </button>
         </Form>
-        <AccountLink className={ICON_BUTTON_CLASS} />
-        <CartCount openCart={openCart} />
+        <AccountLink className="relative flex items-center justify-center w-8 h-8 focus:ring-primary/5" />
+        <CartCount isHome={isHome} openCart={openCart} />
       </div>
     </header>
   );
@@ -320,15 +336,22 @@ function AccountLink({className}: {className?: string}) {
   );
 }
 
-function CartCount({openCart}: {openCart: () => void}) {
+function CartCount({
+  isHome,
+  openCart,
+}: {
+  isHome: boolean;
+  openCart: () => void;
+}) {
   const rootData = useRouteLoaderData<RootLoader>('root');
   if (!rootData) return null;
 
   return (
-    <Suspense fallback={<Badge count={0} openCart={openCart} />}>
+    <Suspense fallback={<Badge count={0} dark={isHome} openCart={openCart} />}>
       <Await resolve={rootData?.cart}>
         {(cart) => (
           <Badge
+            dark={isHome}
             openCart={openCart}
             count={cart?.totalQuantity || 0}
           />
@@ -338,34 +361,46 @@ function CartCount({openCart}: {openCart: () => void}) {
   );
 }
 
-function Badge({openCart, count}: {count: number; openCart: () => void}) {
+function Badge({
+  openCart,
+  dark,
+  count,
+}: {
+  count: number;
+  dark: boolean;
+  openCart: () => void;
+}) {
   const isHydrated = useIsHydrated();
 
   const BadgeCounter = useMemo(
     () => (
       <>
-        <IconBag className="h-5 w-5" />
-        <div className="absolute -right-1.5 -top-1 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-accent px-1 text-[0.65rem] font-bold text-contrast shadow-glow">
+        <IconBag />
+        <div
+          className={`${
+            dark
+              ? 'text-primary bg-contrast dark:text-contrast dark:bg-primary'
+              : 'text-contrast bg-primary'
+          } absolute bottom-1 right-1 text-[0.625rem] font-medium subpixel-antialiased h-3 min-w-[0.75rem] flex items-center justify-center leading-none text-center rounded-full w-auto px-[0.125rem] pb-px`}
+        >
           <span>{count || 0}</span>
         </div>
       </>
     ),
-    [count],
+    [count, dark],
   );
 
   return isHydrated ? (
     <button
       onClick={openCart}
-      className={ICON_BUTTON_CLASS}
-      aria-label="View cart"
+      className="relative flex items-center justify-center w-8 h-8 focus:ring-primary/5"
     >
       {BadgeCounter}
     </button>
   ) : (
     <Link
       to="/cart"
-      className={ICON_BUTTON_CLASS}
-      aria-label="View cart"
+      className="relative flex items-center justify-center w-8 h-8 focus:ring-primary/5"
     >
       {BadgeCounter}
     </Link>
@@ -373,60 +408,44 @@ function Badge({openCart, count}: {count: number; openCart: () => void}) {
 }
 
 function Footer({menu}: {menu?: EnhancedMenu}) {
-  const year = new Date().getFullYear();
+  const isHome = useIsHomePath();
+  const itemsCount = menu
+    ? menu?.items?.length + 1 > 4
+      ? 4
+      : menu?.items?.length + 1
+    : [];
 
   return (
-    <footer className="mt-16 border-t border-white/10 pt-12 text-primary/80">
+    <Section
+      divider={isHome ? 'none' : 'top'}
+      as="footer"
+      role="contentinfo"
+      className={`grid min-h-[25rem] items-start grid-flow-row w-full gap-6 py-8 px-6 md:px-8 lg:px-12 md:gap-8 lg:gap-12 grid-cols-1 md:grid-cols-2 lg:grid-cols-${itemsCount}
+        bg-primary dark:bg-contrast dark:text-primary text-contrast overflow-hidden`}
+    >
+      <FooterMenu menu={menu} />
+      <CountrySelector />
       <div
-        className={`${LAYOUT_CONTAINER} grid gap-10 lg:grid-cols-[2fr_1fr]`}
+        className={`self-end pt-8 opacity-50 md:col-span-2 lg:col-span-${itemsCount}`}
       >
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          <FooterMenu menu={menu} />
-        </div>
-        <div className="glass-panel w-full rounded-[1.5rem] border border-white/10 p-6">
-          <Heading
-            size="copy"
-            className="mb-4 text-[0.75rem] uppercase tracking-[0.45em] text-primary/60"
-            as="h3"
-          >
-            Region
-          </Heading>
-          <CountrySelector />
-        </div>
+        &copy; {new Date().getFullYear()} / Shopify, Inc. Hydrogen is an MIT
+        Licensed Open Source project.
       </div>
-      <div
-        className={`${LAYOUT_CONTAINER} mt-10 flex flex-wrap items-center justify-between gap-4 pb-10 text-[0.65rem] uppercase tracking-[0.4em] text-primary/40`}
-      >
-        <span>&copy; {year} / Shopify Hydrogen Experiments</span>
-        <span>Built for makers everywhere</span>
-      </div>
-    </footer>
+    </Section>
   );
 }
 
 function FooterLink({item}: {item: ChildEnhancedMenuItem}) {
-  const linkClasses = 'text-sm text-primary/70 transition hover:text-primary';
-
   if (item.to.startsWith('http')) {
     return (
-      <a
-        href={item.to}
-        target={item.target}
-        rel="noopener noreferrer"
-        className={linkClasses}
-      >
+      <a href={item.to} target={item.target} rel="noopener noreferrer">
         {item.title}
       </a>
     );
   }
 
   return (
-    <Link
-      to={item.to}
-      target={item.target}
-      prefetch="intent"
-      className={linkClasses}
-    >
+    <Link to={item.to} target={item.target} prefetch="intent">
       {item.title}
     </Link>
   );
@@ -434,8 +453,8 @@ function FooterLink({item}: {item: ChildEnhancedMenuItem}) {
 
 function FooterMenu({menu}: {menu?: EnhancedMenu}) {
   const styles = {
-    section: 'flex flex-col gap-3',
-    nav: 'grid gap-2 pb-4 text-sm text-primary/70',
+    section: 'grid gap-4',
+    nav: 'grid gap-2 pb-6',
   };
 
   return (
@@ -445,8 +464,8 @@ function FooterMenu({menu}: {menu?: EnhancedMenu}) {
           <Disclosure>
             {({open}) => (
               <>
-                <Disclosure.Button className="w-full text-left md:cursor-default">
-                  <Heading size="copy" className="text-sm font-semibold text-primary">
+                <Disclosure.Button className="text-left md:cursor-default">
+                  <Heading className="flex justify-between" size="lead" as="h3">
                     {item.title}
                     {item?.items?.length > 0 && (
                       <span className="md:hidden">

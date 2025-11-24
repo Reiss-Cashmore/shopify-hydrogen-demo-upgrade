@@ -9,7 +9,6 @@ import type {
 import type {CollectionContentFragment} from 'storefrontapi.generated';
 import {Heading, Text} from '~/components/Text';
 import {Link} from '~/components/Link';
-import {Button} from '~/components/Button';
 
 type HeroProps = CollectionContentFragment & {
   height?: 'full';
@@ -31,22 +30,20 @@ export function Hero({
   spreadSecondary,
   top,
 }: HeroProps) {
-  const topSpacing = top ? 'mt-6' : '';
-
   return (
     <Link to={`/collections/${handle}`} prefetch="viewport">
       <section
         className={clsx(
-          'relative flex w-full flex-col overflow-hidden rounded-[2.5rem] border border-white/10 bg-surface/80 shadow-glow',
-          topSpacing,
+          'relative justify-end flex flex-col w-full pb-0',
+          top && '-mt-nav',
           height === 'full'
             ? 'h-screen'
-            : 'aspect-[4/5] sm:aspect-[3/2] lg:min-h-[28rem]',
+            : 'aspect-[4/5] sm:aspect-square md:aspect-[5/4] lg:aspect-[3/2] xl:aspect-[2/1]',
         )}
       >
-        <div className="absolute inset-0 -z-10 grid flex-grow grid-flow-col pointer-events-none auto-cols-fr content-stretch">
+        <div className="absolute inset-0 grid flex-grow grid-flow-col pointer-events-none auto-cols-fr -z-10 content-stretch overflow-clip">
           {spread?.reference && (
-            <div className="h-full w-full">
+            <div>
               <SpreadMedia
                 sizes={
                   spreadSecondary?.reference
@@ -59,7 +56,7 @@ export function Hero({
             </div>
           )}
           {spreadSecondary?.reference && (
-            <div className="hidden md:block h-full w-full">
+            <div className="hidden md:block">
               <SpreadMedia
                 sizes="50vw"
                 data={spreadSecondary.reference as Media}
@@ -68,42 +65,18 @@ export function Hero({
             </div>
           )}
         </div>
-        <div className="absolute inset-0 -z-10 bg-gradient-to-tr from-contrast/70 via-surface/60 to-transparent" />
-        <div className="absolute inset-0 -z-10 opacity-30">
-          <div className="h-full w-full bg-grid-overlay" />
-        </div>
-        <div className="relative flex h-full flex-col justify-between gap-6 px-6 py-8 text-primary sm:px-10 md:px-14">
-          <div className="flex flex-col gap-4">
-            {heading?.value && (
-              <Heading
-                format
-                as="h2"
-                size="display"
-                className="max-w-2xl text-contrast drop-shadow-[0_15px_45px_rgba(0,0,0,0.45)]"
-              >
-                {heading.value}
-              </Heading>
-            )}
-            {byline?.value && (
-              <Text
-                format
-                width="narrow"
-                as="p"
-                size="lead"
-                className="text-primary/80"
-              >
-                {byline.value}
-              </Text>
-            )}
-          </div>
-          <div className="flex flex-wrap items-center gap-4">
-            <Button as="span" variant="primary" width="auto">
-              {cta?.value ?? 'Shop now'}
-            </Button>
-            <Text size="fine" className="text-primary/70">
-              Explore the generator presets
+        <div className="flex flex-col items-baseline justify-between gap-4 px-6 py-8 sm:px-8 md:px-12 bg-gradient-to-t dark:from-contrast/60 dark:text-primary from-primary/60 text-contrast">
+          {heading?.value && (
+            <Heading format as="h2" size="display" className="max-w-md">
+              {heading.value}
+            </Heading>
+          )}
+          {byline?.value && (
+            <Text format width="narrow" as="p" size="lead">
+              {byline.value}
             </Text>
-          </div>
+          )}
+          {cta?.value && <Text size="lead">{cta.value}</Text>}
         </div>
       </section>
     </Link>
@@ -120,7 +93,7 @@ function SpreadMedia({data, loading, sizes}: SpreadMediaProps) {
   return (
     <MediaFile
       data={data}
-      className="block object-cover w-full h-full align-bottom leading-none"
+      className="block object-cover w-full h-full"
       mediaOptions={{
         video: {
           controls: false,

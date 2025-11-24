@@ -46,14 +46,14 @@ export function ProductCard({
   }
 
   return (
-    <div className="group flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5/10 p-4 transition hover:-translate-y-1 hover:border-white/25">
+    <div className="flex flex-col gap-2">
       <Link
         onClick={onClick}
         to={`/products/${product.handle}`}
         prefetch="viewport"
       >
         <div className={clsx('grid gap-4', className)}>
-          <div className="card-image aspect-[4/5] rounded-2xl">
+          <div className="card-image aspect-[4/5] bg-primary/5">
             {image && (
               <Image
                 className="object-cover w-full fadeIn"
@@ -67,23 +67,28 @@ export function ProductCard({
             <Text
               as="label"
               size="fine"
-              className="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-[0.7rem] font-medium uppercase tracking-widest text-contrast/90"
+              className="absolute top-0 right-0 m-4 text-right text-notice"
             >
               {cardLabel}
             </Text>
           </div>
-          <div className="grid gap-2">
-            <Text className="w-full overflow-hidden whitespace-nowrap text-ellipsis text-base font-semibold text-primary">
+          <div className="grid gap-1">
+            <Text
+              className="w-full overflow-hidden whitespace-nowrap text-ellipsis "
+              as="h3"
+            >
               {product.title}
             </Text>
-            <div className="flex items-baseline gap-3 text-lg font-semibold text-primary">
-              <Money withoutTrailingZeros data={price!} />
-              {isDiscounted(price as MoneyV2, compareAtPrice as MoneyV2) && (
-                <CompareAtPrice
-                  className="text-sm font-medium text-primary/60 line-through"
-                  data={compareAtPrice as MoneyV2}
-                />
-              )}
+            <div className="flex gap-4">
+              <Text className="flex gap-4">
+                <Money withoutTrailingZeros data={price!} />
+                {isDiscounted(price as MoneyV2, compareAtPrice as MoneyV2) && (
+                  <CompareAtPrice
+                    className={'opacity-50'}
+                    data={compareAtPrice as MoneyV2}
+                  />
+                )}
+              </Text>
             </div>
           </div>
         </div>

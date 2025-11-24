@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import type {CartBuyerIdentityInput} from '@shopify/hydrogen/storefront-api-types';
 import {CartForm} from '@shopify/hydrogen';
 
+import {Button} from '~/components/Button';
 import {Heading} from '~/components/Text';
 import {IconCheck} from '~/components/Icon';
 import type {Localizations, Locale} from '~/lib/type';
@@ -51,24 +52,21 @@ export function CountrySelector() {
   return (
     <section
       ref={observerRef}
-      className="grid w-full gap-4 text-primary"
+      className="grid w-full gap-4"
+      onMouseLeave={closeDropdown}
     >
-      <Heading
-        size="copy"
-        className="cursor-default text-[0.75rem] uppercase tracking-[0.45em] text-primary/60"
-        as="h3"
-      >
+      <Heading size="lead" className="cursor-default" as="h3">
         Country
       </Heading>
       <div className="relative">
         <details
-          className="relative w-full overflow-hidden rounded-2xl border border-white/15 bg-white/5 text-primary shadow-glow"
+          className="absolute w-full border rounded border-contrast/30 dark:border-white open:round-b-none overflow-clip"
           ref={closeRef}
         >
-          <summary className="flex items-center justify-between w-full cursor-pointer px-5 py-4 text-[0.75rem] uppercase tracking-[0.45em] text-primary/70">
+          <summary className="flex items-center justify-between w-full px-4 py-3 cursor-pointer">
             {selectedLocale.label}
           </summary>
-          <div className="max-h-60 w-full overflow-auto border-t border-white/10 bg-surface/80 text-primary">
+          <div className="w-full overflow-auto border-t border-contrast/30 dark:border-white bg-contrast/30 max-h-36">
             {countries &&
               Object.keys(countries).map((countryPath) => {
                 const countryLocale = countries[countryPath];
@@ -118,21 +116,23 @@ function Country({
         countryCode: countryLocale.country,
       }}
     >
-      <button
-        className={clsx(
-          'flex w-full items-center justify-between border border-transparent px-4 py-3 text-left text-sm text-primary/80 transition hover:border-white/30',
-          isSelected && 'border-white/40 text-primary',
-        )}
+      <Button
+        className={clsx([
+          'text-contrast dark:text-primary',
+          'bg-primary dark:bg-contrast w-full p-2 transition rounded flex justify-start',
+          'items-center text-left cursor-pointer py-2 px-4',
+        ])}
         type="submit"
+        variant="primary"
         onClick={closeDropdown}
       >
-        <span>{countryLocale.label}</span>
+        {countryLocale.label}
         {isSelected ? (
-          <span className="ml-2 text-accent">
+          <span className="ml-2">
             <IconCheck />
           </span>
         ) : null}
-      </button>
+      </Button>
     </ChangeLocaleForm>
   );
 }

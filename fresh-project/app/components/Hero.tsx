@@ -31,7 +31,7 @@ export function Hero({
     <Link to={`/collections/${handle}`}>
       <section
         className={clsx(
-          'relative justify-end flex flex-col w-full',
+          'relative justify-end flex flex-col w-full pb-0',
           top && '-mt-nav',
           height === 'full'
             ? 'h-screen'

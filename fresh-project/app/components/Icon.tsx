@@ -10,12 +10,13 @@ function Icon({
   className,
   fill = 'currentColor',
   stroke,
+  viewBox = '0 0 20 20',
   ...props
 }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 20 20"
+      viewBox={viewBox}
       {...props}
       fill={fill}
       stroke={stroke}
@@ -167,11 +168,12 @@ export function IconLogin(props: IconProps) {
 
 export function IconAccount(props: IconProps) {
   return (
-    <Icon {...props}>
+    <Icon {...props} viewBox="0 0 24 24">
       <title>Account</title>
       <path
         fillRule="evenodd"
-        d="M9.9998 12.625c-1.9141 0-3.6628.698-5.0435 1.8611C3.895 13.2935 3.25 11.7221 3.25 10c0-3.728 3.022-6.75 6.75-6.75 3.7279 0 6.75 3.022 6.75 6.75 0 1.7222-.645 3.2937-1.7065 4.4863-1.3807-1.1632-3.1295-1.8613-5.0437-1.8613ZM10 18c-2.3556 0-4.4734-1.0181-5.9374-2.6382C2.7806 13.9431 2 12.0627 2 10c0-4.4183 3.5817-8 8-8s8 3.5817 8 8-3.5817 8-8 8Zm0-12.5c-1.567 0-2.75 1.394-2.75 3s1.183 3 2.75 3 2.75-1.394 2.75-3-1.183-3-2.75-3Z"
+        clipRule="evenodd"
+        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm0 4.5a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm0 12a7.5 7.5 0 0 0 5.799-2.712 5.25 5.25 0 0 0-11.598 0A7.5 7.5 0 0 0 12 18.75Z"
       />
     </Icon>
   );

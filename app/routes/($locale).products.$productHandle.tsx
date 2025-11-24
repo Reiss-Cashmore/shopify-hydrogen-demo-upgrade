@@ -365,37 +365,55 @@ export function ProductForm({
                 <Text>Sold out</Text>
               </Button>
             ) : (
-              <AddToCartButton
-                lines={[
-                  {
-                    merchandiseId: selectedVariant.id!,
-                    quantity: 1,
-                  },
-                ]}
-                variant="primary"
-                data-test="add-to-cart"
-              >
-                <Text
-                  as="span"
-                  className="flex items-center justify-center gap-2"
+              <>
+                <AddToCartButton
+                  lines={[
+                    {
+                      merchandiseId: selectedVariant.id!,
+                      quantity: 1,
+                    },
+                  ]}
+                  variant="primary"
+                  data-test="add-to-cart"
+                  className="w-full justify-center text-sm font-semibold uppercase tracking-[0.4em] text-contrast"
                 >
-                  <span>Add to Cart</span> <span>·</span>{' '}
-                  <Money
-                    withoutTrailingZeros
-                    data={selectedVariant?.price!}
-                    as="span"
-                    data-test="price"
-                  />
-                  {isOnSale && (
-                    <Money
-                      withoutTrailingZeros
-                      data={selectedVariant?.compareAtPrice!}
-                      as="span"
-                      className="opacity-50 strike"
-                    />
-                  )}
-                </Text>
-              </AddToCartButton>
+                  Add to Cart
+                </AddToCartButton>
+                <div className="rounded-[1.5rem] border border-white/10 bg-white/5 px-5 py-4 text-primary shadow-glow">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-col gap-2">
+                      <p className="text-xs font-semibold uppercase tracking-[0.4em] text-primary/60">
+                        Current price
+                      </p>
+                      <div className="flex items-baseline gap-3">
+                        <Money
+                          withoutTrailingZeros
+                          data={selectedVariant?.price!}
+                          as="span"
+                          data-test="price"
+                          className="text-3xl font-semibold text-contrast"
+                        />
+                        {isOnSale && (
+                          <Money
+                            withoutTrailingZeros
+                            data={selectedVariant?.compareAtPrice!}
+                            as="span"
+                            className="text-lg font-medium text-primary/50 line-through"
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-start gap-2 text-sm sm:items-end">
+                      <p className="text-xs font-semibold uppercase tracking-[0.35em] text-primary/60">
+                        Availability
+                      </p>
+                      <span className="rounded-full border border-primary/20 bg-primary/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-accent">
+                        In stock
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </>
             )}
             {!isOutOfStock && (
               <ShopPayButton

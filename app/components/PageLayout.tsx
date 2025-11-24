@@ -245,7 +245,10 @@ function DesktopHeader({
   const params = useParams();
   const {y} = useWindowScroll();
   return (
-    <header role="banner" className="hidden w-full lg:block sticky top-6 z-50">
+    <header
+      role="banner"
+      className="hidden w-full lg:block sticky top-6 z-50 px-4 lg:px-6"
+    >
       <div
         className={`w-full rounded-[2rem] border border-white/10 bg-surface/80 py-5 text-primary shadow-glow backdrop-blur-2xl transition-all duration-300 ${
           y > 30 ? 'border-white/30 bg-surface/90' : ''

@@ -1,4 +1,4 @@
-import {Image} from '@shopify/hydrogen';
+import {Image, ModelViewer} from '@shopify/hydrogen';
 
 import type {MediaFragment} from 'storefrontapi.generated';
 
@@ -25,6 +25,7 @@ export function ProductGallery({
         const isFourth = i === 3;
         const isFullWidth = i % 3 === 0;
 
+        const isModel3d = med.__typename === 'Model3d';
         const image =
           med.__typename === 'MediaImage'
             ? {...med.image, altText: med.alt || 'Product image'}
@@ -38,6 +39,7 @@ export function ProductGallery({
 
         return (
           <div className={style} key={med.id || image?.id}>
+            {isModel3d && <ModelViewerFrame media={med} />}
             {image && (
               <Image
                 loading={i === 0 ? 'eager' : 'lazy'}
@@ -55,5 +57,30 @@ export function ProductGallery({
         );
       })}
     </div>
+  );
+}
+
+type Model3dMedia = Extract<MediaFragment, {__typename: 'Model3d'}>;
+
+function ModelViewerFrame({media}: {media: Model3dMedia}) {
+  return (
+    <ModelViewer
+      data={media}
+      ar
+      arModes="webxr scene-viewer quick-look"
+      cameraControls
+      autoRotate
+      shadowIntensity={1}
+      exposure={1.1}
+      poster={media.previewImage?.url ?? undefined}
+      className="block h-full w-full rounded-[1.5rem] border border-white/10 bg-surface/90"
+    >
+      <button
+        slot="ar-button"
+        className="rounded-full bg-accent px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-contrast shadow-glow"
+      >
+        View in AR
+      </button>
+    </ModelViewer>
   );
 }

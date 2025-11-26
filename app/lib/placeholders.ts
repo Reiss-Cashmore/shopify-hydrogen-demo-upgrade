@@ -13,6 +13,7 @@ const PLACEHOLDERS = {
       handle: 'freestyle',
       spread: {
         reference: {
+          __typename: 'MediaImage',
           mediaContentType: 'IMAGE',
           alt: 'Tracks in the snow leading to a person on a mountain top with a red jacket contrasting to an epic blue horizon with a mountain range in the distance.',
           previewImage: {

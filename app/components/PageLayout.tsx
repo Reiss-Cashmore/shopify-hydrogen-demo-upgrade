@@ -404,7 +404,7 @@ function Footer({menu}: {menu?: EnhancedMenu}) {
       <div
         className={`${LAYOUT_CONTAINER} mt-10 flex flex-wrap items-center justify-between gap-4 pb-10 text-[0.65rem] uppercase tracking-[0.4em] text-primary/40`}
       >
-        <span>&copy; {year} / Shopify Hydrogen Experiments</span>
+        <span>&copy; {year} / Neurifab</span>
         <span>Built for makers everywhere</span>
       </div>
     </footer>

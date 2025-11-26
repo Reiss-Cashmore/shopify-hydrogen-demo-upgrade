@@ -1,18 +1,27 @@
+import {Suspense} from 'react';
 import {
   type MetaArgs,
   type LoaderFunctionArgs,
+  Await,
+  useLoaderData,
 } from 'react-router';
-import {Suspense} from 'react';
-import { Await, useLoaderData } from 'react-router';
 import {getSeoMeta} from '@shopify/hydrogen';
 
-import {Hero} from '~/components/Hero';
+import {Hero, type HeroProps} from '~/components/Hero';
 import {FeaturedCollections} from '~/components/FeaturedCollections';
 import {ProductSwimlane} from '~/components/ProductSwimlane';
-import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
+import {PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 import {getHeroPlaceholder} from '~/lib/placeholders';
 import {seoPayload} from '~/lib/seo.server';
 import {routeHeaders} from '~/data/cache';
+import {
+  parseRouteHeroes,
+  getRenderableHero,
+  ROUTE_SECTIONS_QUERY,
+} from '~/lib/hero';
+
+const HOME_CONTAINER =
+  'w-full max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10';
 
 export const headers = routeHeaders;
 
@@ -43,16 +52,22 @@ export async function loader(args: LoaderFunctionArgs) {
  * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
  */
 async function loadCriticalData({context, request}: LoaderFunctionArgs) {
-  const [{shop, hero}] = await Promise.all([
-    context.storefront.query(HOMEPAGE_SEO_QUERY, {
-      variables: {handle: 'freestyle'},
-    }),
-    // Add other queries here, so that they are loaded in parallel
-  ]);
+  const {route} = await context.storefront.query(ROUTE_SECTIONS_QUERY, {
+    variables: {
+      handle: {
+        handle: 'home',
+        type: 'route_sections',
+      },
+    },
+  });
+
+  const {primaryHero, secondaryHero, tertiaryHero} =
+    parseRouteHeroes(route ?? null);
 
   return {
-    shop,
-    primaryHero: hero,
+    primaryHero,
+    secondaryHero,
+    tertiaryHero,
     seo: seoPayload.home({url: request.url}),
   };
 }
@@ -84,21 +99,6 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
       return null;
     });
 
-  const secondaryHero = context.storefront
-    .query(COLLECTION_HERO_QUERY, {
-      variables: {
-        handle: 'backcountry',
-        country,
-        language,
-      },
-    })
-    .catch((error) => {
-      // Log query errors, but don't throw them so the page can still render
-      // eslint-disable-next-line no-console
-      console.error(error);
-      return null;
-    });
-
   const featuredCollections = context.storefront
     .query(FEATURED_COLLECTIONS_QUERY, {
       variables: {
@@ -113,26 +113,9 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
       return null;
     });
 
-  const tertiaryHero = context.storefront
-    .query(COLLECTION_HERO_QUERY, {
-      variables: {
-        handle: 'winter-2022',
-        country,
-        language,
-      },
-    })
-    .catch((error) => {
-      // Log query errors, but don't throw them so the page can still render
-      // eslint-disable-next-line no-console
-      console.error(error);
-      return null;
-    });
-
   return {
     featuredProducts,
-    secondaryHero,
     featuredCollections,
-    tertiaryHero,
   };
 }
 
@@ -149,14 +132,14 @@ export default function Homepage() {
     featuredProducts,
   } = useLoaderData<typeof loader>();
 
-  // TODO: skeletons vs placeholders
-  const skeletons = getHeroPlaceholder([{}, {}, {}]);
+  const skeletons = getHeroPlaceholder([{}, {}, {}]) as HeroProps[];
+  const normalizedPrimaryHero = getRenderableHero(primaryHero, skeletons[0]);
+  const normalizedSecondaryHero = getRenderableHero(secondaryHero, skeletons[1]);
+  const normalizedTertiaryHero = getRenderableHero(tertiaryHero, skeletons[2]);
 
   return (
-    <>
-      {primaryHero && (
-        <Hero {...primaryHero} height="full" top loading="eager" />
-      )}
+    <div className={`${HOME_CONTAINER} flex flex-col gap-12`}>
+      {normalizedPrimaryHero && <Hero {...normalizedPrimaryHero} />}
 
       {featuredProducts && (
         <Suspense>
@@ -181,18 +164,7 @@ export default function Homepage() {
         </Suspense>
       )}
 
-      {secondaryHero && (
-        <Suspense fallback={<Hero {...skeletons[1]} />}>
-          <Await resolve={secondaryHero}>
-            {(response) => {
-              if (!response || !response?.hero) {
-                return <></>;
-              }
-              return <Hero {...response.hero} />;
-            }}
-          </Await>
-        </Suspense>
-      )}
+      {normalizedSecondaryHero && <Hero {...normalizedSecondaryHero} />}
 
       {featuredCollections && (
         <Suspense>
@@ -216,74 +188,10 @@ export default function Homepage() {
         </Suspense>
       )}
 
-      {tertiaryHero && (
-        <Suspense fallback={<Hero {...skeletons[2]} />}>
-          <Await resolve={tertiaryHero}>
-            {(response) => {
-              if (!response || !response?.hero) {
-                return <></>;
-              }
-              return <Hero {...response.hero} />;
-            }}
-          </Await>
-        </Suspense>
-      )}
-    </>
+      {normalizedTertiaryHero && <Hero {...normalizedTertiaryHero} />}
+    </div>
   );
 }
-
-const COLLECTION_CONTENT_FRAGMENT = `#graphql
-  fragment CollectionContent on Collection {
-    id
-    handle
-    title
-    descriptionHtml
-    heading: metafield(namespace: "hero", key: "title") {
-      value
-    }
-    byline: metafield(namespace: "hero", key: "byline") {
-      value
-    }
-    cta: metafield(namespace: "hero", key: "cta") {
-      value
-    }
-    spread: metafield(namespace: "hero", key: "spread") {
-      reference {
-        ...Media
-      }
-    }
-    spreadSecondary: metafield(namespace: "hero", key: "spread_secondary") {
-      reference {
-        ...Media
-      }
-    }
-  }
-  ${MEDIA_FRAGMENT}
-` as const;
-
-const HOMEPAGE_SEO_QUERY = `#graphql
-  query seoCollectionContent($handle: String, $country: CountryCode, $language: LanguageCode)
-  @inContext(country: $country, language: $language) {
-    hero: collection(handle: $handle) {
-      ...CollectionContent
-    }
-    shop {
-      name
-      description
-    }
-  }
-  ${COLLECTION_CONTENT_FRAGMENT}
-` as const;
-
-const COLLECTION_HERO_QUERY = `#graphql
-  query heroCollectionContent($handle: String, $country: CountryCode, $language: LanguageCode)
-  @inContext(country: $country, language: $language) {
-    hero: collection(handle: $handle) {
-      ...CollectionContent
-    }
-  }
-  ${COLLECTION_CONTENT_FRAGMENT}
-` as const;
 
 // @see: https://shopify.dev/api/storefront/current/queries/products
 export const HOMEPAGE_FEATURED_PRODUCTS_QUERY = `#graphql

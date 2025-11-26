@@ -31,14 +31,27 @@ export function ProductGallery({
             ? {...med.image, altText: med.alt || 'Product image'}
             : null;
 
-        const style = [
-          isFullWidth ? 'md:col-span-2' : 'md:col-span-1',
-          isFirst || isFourth ? '' : 'md:aspect-[4/5]',
-          'aspect-square snap-center card-image bg-white dark:bg-contrast/10 w-mobileGallery md:w-full',
-        ].join(' ');
+        const cardClasses = ['aspect-square snap-center card-image bg-white dark:bg-contrast/10 w-mobileGallery md:w-full'];
+        if (!isFirst && !isFourth) {
+          cardClasses.push('md:aspect-[4/5]');
+        }
+        if (isFullWidth) {
+          cardClasses.push('md:col-span-2');
+        } else {
+          cardClasses.push('md:col-span-1');
+        }
+        if (isModel3d) {
+          cardClasses.push('card-image--interactive');
+        }
+
+        const cardStyle = isModel3d ? {padding: 0} : undefined;
 
         return (
-          <div className={style} key={med.id || image?.id}>
+          <div
+            className={cardClasses.join(' ')}
+            key={med.id || image?.id}
+            style={cardStyle}
+          >
             {isModel3d && <ModelViewerFrame media={med} />}
             {image && (
               <Image
@@ -63,9 +76,12 @@ export function ProductGallery({
 type Model3dMedia = Extract<MediaFragment, {__typename: 'Model3d'}>;
 
 function ModelViewerFrame({media}: {media: Model3dMedia}) {
+  const normalizedSources = reorderModelSources(media.sources ?? []);
+  const normalizedMedia = {...media, sources: normalizedSources};
+
   return (
     <ModelViewer
-      data={media}
+      data={normalizedMedia}
       ar
       arModes="webxr scene-viewer quick-look"
       cameraControls
@@ -83,4 +99,19 @@ function ModelViewerFrame({media}: {media: Model3dMedia}) {
       </button>
     </ModelViewer>
   );
+}
+
+function reorderModelSources(
+  sources: NonNullable<Model3dMedia['sources']>,
+): NonNullable<Model3dMedia['sources']> {
+  if (!sources?.length) return sources ?? [];
+  const nextSources = [...sources];
+  const glbIndex = nextSources.findIndex(
+    (source) => source.mimeType === 'model/gltf-binary',
+  );
+  if (glbIndex > 0) {
+    const [glbSource] = nextSources.splice(glbIndex, 1);
+    nextSources.unshift(glbSource);
+  }
+  return nextSources;
 }

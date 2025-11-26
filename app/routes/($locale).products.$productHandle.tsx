@@ -156,13 +156,23 @@ export default function Product() {
     <>
       <Section className="px-0 md:px-8 lg:px-12">
         <div className="grid items-start md:gap-6 lg:gap-16 md:grid-cols-2 lg:grid-cols-2">
+          <div className="w-full px-6 pb-4 md:hidden">
+            <div className="grid gap-2">
+              <Heading as="h1" className="whitespace-normal">
+                {title}
+              </Heading>
+              {vendor && (
+                <Text className={'opacity-50 font-medium'}>{vendor}</Text>
+              )}
+            </div>
+          </div>
           <ProductGallery
             media={galleryMedia}
             className="w-full"
           />
           <div className="sticky md:-mb-nav md:top-nav md:-translate-y-nav md:h-screen md:pt-nav hiddenScroll md:overflow-y-scroll">
             <section className="flex flex-col w-full gap-8 p-6 md:px-4 lg:px-6">
-              <div className="grid gap-2">
+              <div className="hidden md:grid gap-2">
                 <Heading as="h1" className="whitespace-normal">
                   {title}
                 </Heading>
@@ -859,11 +869,20 @@ function getSelectedQuality(
 }
 
 function getGalleryMedia(product: ProductFragment): MediaFragment[] {
-  const nodes = product.media?.nodes ?? [];
+  const nodes = [...(product.media?.nodes ?? [])];
   const referenced = product.model3d?.reference;
   if (isModel3dMedia(referenced)) {
-    return [referenced, ...nodes];
+    nodes.unshift(referenced);
   }
+
+  const firstModelIndex = nodes.findIndex(
+    (media) => media.__typename === 'Model3d',
+  );
+  if (firstModelIndex > 0) {
+    const [modelMedia] = nodes.splice(firstModelIndex, 1);
+    nodes.unshift(modelMedia);
+  }
+
   return nodes;
 }
 

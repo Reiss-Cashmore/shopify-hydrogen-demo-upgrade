@@ -205,6 +205,7 @@ shop-pay-button {
       opacity: 0;
       background: radial-gradient(circle at 30% 20%, rgba(255, 120, 165, 0.45), transparent 60%);
       transition: opacity 0.35s ease;
+      pointer-events: none;
     }
     img {
       @apply aspect-[inherit] h-full w-full object-cover;
@@ -216,6 +217,31 @@ shop-pay-button {
     &:hover::after {
       opacity: 1;
     }
+  }
+
+  .card-image--interactive {
+    background: rgba(0, 0, 0, 0.35);
+    align-items: stretch;
+    justify-content: stretch;
+    transform: none;
+    border-color: rgba(255, 255, 255, 0.1);
+    transition: none;
+  }
+
+  .card-image--interactive::after {
+    display: none;
+  }
+
+  .card-image--interactive model-viewer,
+  .card-image--interactive .model-viewer {
+    width: 100%;
+    height: 100%;
+    flex: 1;
+  }
+
+  .card-image--interactive:hover {
+    transform: none;
+    border-color: rgba(255, 255, 255, 0.1);
   }
 
   .swimlane {

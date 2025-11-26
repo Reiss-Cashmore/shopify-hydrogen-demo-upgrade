@@ -25,8 +25,10 @@ export default async function handleRequest(
       'https://shopify.com',
       'https://www.google-analytics.com',
       'https://www.googletagmanager.com',
+      'https://unpkg.com',
       ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
     ],
+    connectSrc: ['https://*.myshopify.com', 'blob:'],
   });
 
   const body = await renderToReadableStream(

@@ -1,0 +1,167 @@
+/* Restore site header and footer styles that openscad may override */
+body > div > div > header,
+body > div > div > footer,
+[role="banner"]:not(.configurator-header),
+[role="contentinfo"] {
+  /* Restore flex layout */
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Restore navigation links */
+body > div > div > header a,
+body > div > div > header button,
+body > div > div > footer a,
+[role="banner"]:not(.configurator-header) a,
+[role="banner"]:not(.configurator-header) button {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Restore form inputs in header */
+body > div > div > header input,
+body > div > div > header form,
+[role="banner"]:not(.configurator-header) input,
+[role="banner"]:not(.configurator-header) form {
+  display: flex;
+}
+
+.configurator-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #0f0f14;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.configurator-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left,
+.header-right {
+  flex: 1;
+}
+
+.header-center {
+  flex: 2;
+  text-align: center;
+}
+
+.header-right {
+  text-align: right;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #60a5fa;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.2s;
+}
+
+.back-link:hover {
+  color: #a78bfa;
+}
+
+.configurator-header h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  background: linear-gradient(90deg, #60a5fa, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: rgba(167, 139, 250, 0.2);
+  color: #a78bfa;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.configurator-main {
+  flex: 1;
+  height: calc(100vh - 60px);
+  min-height: 700px;
+}
+
+/* Fix PrimeReact toggle button - make the whole button clickable */
+.configurator-main [data-pc-name="togglebutton"],
+.configurator-main .p-togglebutton {
+  position: relative !important;
+  cursor: pointer !important;
+}
+
+/* Force the hidden input to cover the entire toggle button */
+.configurator-main [data-pc-name="togglebutton"] input[type="checkbox"],
+.configurator-main .p-togglebutton input[type="checkbox"],
+.configurator-main .p-togglebutton-input {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+  cursor: pointer !important;
+  z-index: 999 !important;
+  pointer-events: auto !important;
+}
+
+.configurator-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  background: #0f0f14;
+  color: #e4e4e7;
+}
+
+.loading-content {
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(59, 130, 246, 0.2);
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: configurator-spin 1s linear infinite;
+  margin: 0 auto 1.5rem;
+}
+
+@keyframes configurator-spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-content h2 {
+  font-size: 1.25rem;
+  margin: 0 0 0.5rem 0;
+  color: #e4e4e7;
+}
+
+.loading-content p {
+  margin: 0;
+  color: #71717a;
+  font-size: 0.875rem;
+}

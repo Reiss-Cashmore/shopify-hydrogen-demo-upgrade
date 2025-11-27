@@ -1,0 +1,12 @@
+/* Scoped OpenSCAD Playground styles using CSS layers */
+@layer openscad {
+  /* Import the openscad-playground styles */
+  @import url('/node_modules/openscad-playground/dist/openscad-playground.css');
+}
+
+/* Apply styles only within the configurator-main container */
+.configurator-main {
+  /* This ensures openscad styles take effect within this container */
+}
+
+

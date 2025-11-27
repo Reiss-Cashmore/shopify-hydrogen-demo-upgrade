@@ -151,6 +151,7 @@ export default function Product() {
   const printDetails = buildPrintDetails(product);
   const selectedQuality = getSelectedQuality(selectedVariant);
   const galleryMedia = getGalleryMedia(product);
+  const colorVariantKey = getColorSelectionKey(selectedVariant);
 
   return (
     <>
@@ -169,6 +170,7 @@ export default function Product() {
           <ProductGallery
             media={galleryMedia}
             className="w-full"
+            colorVariantKey={colorVariantKey}
           />
           <div className="sticky md:-mb-nav md:top-nav md:-translate-y-nav md:h-screen md:pt-nav hiddenScroll md:overflow-y-scroll">
             <section className="flex flex-col w-full gap-8 p-6 md:px-4 lg:px-6">
@@ -885,6 +887,20 @@ function getGalleryMedia(product: ProductFragment): MediaFragment[] {
 
   return nodes;
 }
+
+function getColorSelectionKey(
+  variant?: ProductFragment['selectedOrFirstAvailableVariant'],
+) {
+  if (!variant) return undefined;
+
+  const colorOption = variant.selectedOptions?.find((option) =>
+    COLOR_OPTION_NAMES.has(option.name.toLowerCase()),
+  );
+
+  return colorOption?.value ?? variant.id ?? undefined;
+}
+
+const COLOR_OPTION_NAMES = new Set(['color', 'colour']);
 
 function isModel3dMedia(
   media: unknown,

@@ -26,9 +26,49 @@ export default async function handleRequest(
       'https://www.google-analytics.com',
       'https://www.googletagmanager.com',
       'https://unpkg.com',
+      'https://cdn.jsdelivr.net', // Monaco editor
+      'https://ajax.googleapis.com', // model-viewer
+      'blob:', // Web workers
+      "'unsafe-eval'", // Required for Monaco editor
       ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
     ],
-    connectSrc: ['https://*.myshopify.com', 'blob:'],
+    styleSrc: [
+      'self',
+      "'unsafe-inline'",
+      'https://cdn.shopify.com',
+      'https://fonts.googleapis.com', // Google Fonts
+      'https://cdn.jsdelivr.net', // Monaco styles
+      ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
+    ],
+    fontSrc: [
+      'self',
+      'data:', // Base64 encoded fonts
+      'https://fonts.gstatic.com', // Google Fonts
+      'https://cdn.jsdelivr.net', // Monaco fonts
+      ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
+    ],
+    imgSrc: [
+      'self',
+      'data:',
+      'blob:',
+      'https://cdn.shopify.com',
+      ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
+    ],
+    connectSrc: [
+      'self',
+      'https://*.myshopify.com',
+      'blob:',
+      'data:', // For model-viewer base64 GLB models
+      'https://cdn.jsdelivr.net',
+      'https://fonts.googleapis.com',
+      'https://fonts.gstatic.com',
+      ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*', 'ws://localhost:*'] : []),
+    ],
+    workerSrc: [
+      'self',
+      'blob:', // Web workers
+      ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
+    ],
   });
 
   const body = await renderToReadableStream(

@@ -1,0 +1,14 @@
+{
+  "name": "model-ruler-demo",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "CLI demo that injects ruler geometry into GLB or STL models.",
+  "scripts": {
+    "start": "node add-rulers.mjs"
+  },
+  "dependencies": {
+    "@gltf-transform/core": "^3.9.0",
+    "@gltf-transform/functions": "^3.9.0",
+    "commander": "^12.1.0"
+  }
+}

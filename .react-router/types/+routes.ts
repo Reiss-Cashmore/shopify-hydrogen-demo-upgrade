@@ -117,6 +117,11 @@ type Pages = {
       "locale"?: string;
     };
   };
+  "/:locale?/configurator": {
+    params: {
+      "locale"?: string;
+    };
+  };
   "/sitemap-empty.xml": {
     params: {};
   };
@@ -194,7 +199,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/:locale?/:shopid/orders/:token/authenticate" | "/:locale?/collections/:collectionHandle" | "/:locale?/products/:productHandle" | "/:locale?/journal/:journalHandle" | "/:locale?/policies/:policyHandle" | "/:locale?/account/authorize" | "/:locale?/collections" | "/:locale?/featured-products" | "/:locale?/pages/:pageHandle" | "/:locale?/account/logout" | "/:locale?/collections/all" | "/:locale?/policies" | "/:locale?/products" | "/sitemap/:type/:page.xml" | "/:locale?/account/login" | "/:locale?/discount/:code" | "/:locale?/journal" | "/:locale?/api/countries" | "/:locale?/api/products" | "/sitemap-empty.xml" | "/:locale?/account" | "/:locale?/account/address/:id" | "/:locale?/account/orders/:id" | "/:locale?/account/edit" | "/:locale?/account/*" | "/:locale?" | "/:locale?/search" | "/:locale?/cart" | "/:locale?/cart/:lines" | "/sitemap.xml" | "/robots.txt" | "/*" | "/graphiql" | "/subrequest-profiler" | "/.well-known/appspecific/com.chrome.devtools.json";
+    page: "/" | "/:locale?/:shopid/orders/:token/authenticate" | "/:locale?/collections/:collectionHandle" | "/:locale?/products/:productHandle" | "/:locale?/journal/:journalHandle" | "/:locale?/policies/:policyHandle" | "/:locale?/account/authorize" | "/:locale?/collections" | "/:locale?/featured-products" | "/:locale?/pages/:pageHandle" | "/:locale?/account/logout" | "/:locale?/collections/all" | "/:locale?/policies" | "/:locale?/products" | "/sitemap/:type/:page.xml" | "/:locale?/account/login" | "/:locale?/discount/:code" | "/:locale?/journal" | "/:locale?/api/countries" | "/:locale?/api/products" | "/:locale?/configurator" | "/sitemap-empty.xml" | "/:locale?/account" | "/:locale?/account/address/:id" | "/:locale?/account/orders/:id" | "/:locale?/account/edit" | "/:locale?/account/*" | "/:locale?" | "/:locale?/search" | "/:locale?/cart" | "/:locale?/cart/:lines" | "/sitemap.xml" | "/robots.txt" | "/*" | "/graphiql" | "/subrequest-profiler" | "/.well-known/appspecific/com.chrome.devtools.json";
   };
   "routes/($locale).$shopid.orders.$token.authenticate.tsx": {
     id: "routes/($locale).$shopid.orders.$token.authenticate";
@@ -271,6 +276,10 @@ type RouteFiles = {
   "routes/($locale).api.products.tsx": {
     id: "routes/($locale).api.products";
     page: "/:locale?/api/products";
+  };
+  "routes/($locale).configurator.tsx": {
+    id: "routes/($locale).configurator";
+    page: "/:locale?/configurator";
   };
   "routes/[sitemap-empty.xml].tsx": {
     id: "routes/[sitemap-empty.xml]";

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gridfinity Kit Configurator</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+      color: #e4e4e7;
+      min-height: 100vh;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .header a {
+      color: #60a5fa;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    
+    .header a:hover {
+      color: #a78bfa;
+    }
+    
+    .main-container {
+      display: flex;
+      height: calc(100vh - 60px);
+    }
+    
+    .playground-container {
+      flex: 1;
+      min-height: 0;
+    }
+    
+    #openscad-playground {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid rgba(59, 130, 246, 0.2);
+      border-top-color: #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>Gridfinity Kit Configurator</h1>
+    <a href="/">← Back to Store</a>
+  </header>
+  
+  <main class="main-container">
+    <div class="playground-container">
+      <div id="openscad-playground">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading OpenSCAD Engine...</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- BrowserFS for virtual filesystem -->
+  <script src="/openscad/browserfs.min.js"></script>
+  
+  <!-- Load React -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <script type="module">
+    // Gridfinity OpenSCAD code
+    const GRIDFINITY_CODE = `// Gridfinity Kit Configurator
+// Configure your custom Gridfinity storage solution
+
+/* [Grid Size] */
+// Number of units in X direction
+grid_x = 2; // [1:1:6]
+// Number of units in Y direction  
+grid_y = 2; // [1:1:6]
+// Number of units in Z direction (height)
+grid_z = 3; // [1:1:6]
+
+/* [Wall Options] */
+// Wall thickness in mm
+wall_thickness = 1.2; // [0.8:0.1:2.4]
+// Enable magnetic holes
+magnets = true;
+// Enable screw holes
+screw_holes = false;
+
+/* [Dividers] */
+// Number of X dividers
+dividers_x = 0; // [0:1:5]
+// Number of Y dividers
+dividers_y = 0; // [0:1:5]
+
+/* [Style] */
+// Corner radius
+corner_radius = 3.75; // [0:0.25:8]
+// Lip style
+lip_style = "normal"; // [normal, reduced, none]
+
+/* [Advanced] */
+// Base unit size (mm)
+unit_size = 42;
+// Base height (mm)
+base_height = 5;
+// Tolerance for fit
+tolerance = 0.25; // [0:0.05:0.5]
+
+// Constants
+$fn = 32;
+grid_unit = unit_size;
+magnet_d = 6.5;
+magnet_h = 2.4;
+screw_d = 3;
+
+module gridfinity_base(x, y) {
+    base_w = x * grid_unit - tolerance * 2;
+    base_d = y * grid_unit - tolerance * 2;
+    
+    difference() {
+        // Main base with rounded corners
+        hull() {
+            for (dx = [corner_radius, base_w - corner_radius])
+                for (dy = [corner_radius, base_d - corner_radius])
+                    translate([dx, dy, 0])
+                        cylinder(h = base_height, r = corner_radius);
+        }
+        
+        // Magnet holes
+        if (magnets) {
+            for (dx = [4.8, base_w - 4.8])
+                for (dy = [4.8, base_d - 4.8])
+                    translate([dx, dy, base_height - magnet_h + 0.01])
+                        cylinder(d = magnet_d, h = magnet_h + 0.1);
+        }
+        
+        // Screw holes
+        if (screw_holes) {
+            for (dx = [4.8, base_w - 4.8])
+                for (dy = [4.8, base_d - 4.8])
+                    translate([dx, dy, -0.01])
+                        cylinder(d = screw_d, h = base_height + 0.1);
+        }
+    }
+}
+
+module gridfinity_walls(x, y, z) {
+    wall_w = x * grid_unit - tolerance * 2;
+    wall_d = y * grid_unit - tolerance * 2;
+    wall_h = z * 7; // 7mm per height unit
+    
+    lip_h = lip_style == "none" ? 0 : (lip_style == "reduced" ? 1.8 : 3.8);
+    
+    difference() {
+        // Outer walls
+        hull() {
+            for (dx = [corner_radius, wall_w - corner_radius])
+                for (dy = [corner_radius, wall_d - corner_radius])
+                    translate([dx, dy, base_height])
+                        cylinder(h = wall_h + lip_h, r = corner_radius);
+        }
+        
+        // Inner cavity
+        inner_offset = wall_thickness;
+        translate([inner_offset, inner_offset, base_height + wall_thickness])
+            hull() {
+                for (dx = [corner_radius, wall_w - corner_radius - inner_offset * 2])
+                    for (dy = [corner_radius, wall_d - corner_radius - inner_offset * 2])
+                        translate([dx, dy, 0])
+                            cylinder(h = wall_h + lip_h + 0.1, r = max(0.5, corner_radius - inner_offset));
+            }
+    }
+}
+
+module gridfinity_dividers(x, y, z) {
+    wall_w = x * grid_unit - tolerance * 2;
+    wall_d = y * grid_unit - tolerance * 2;
+    wall_h = z * 7;
+    inner_offset = wall_thickness;
+    
+    // X dividers
+    if (dividers_x > 0) {
+        spacing_x = (wall_w - inner_offset * 2) / (dividers_x + 1);
+        for (i = [1:dividers_x]) {
+            translate([inner_offset + i * spacing_x - wall_thickness/2, inner_offset, base_height + wall_thickness])
+                cube([wall_thickness, wall_d - inner_offset * 2, wall_h - wall_thickness]);
+        }
+    }
+    
+    // Y dividers
+    if (dividers_y > 0) {
+        spacing_y = (wall_d - inner_offset * 2) / (dividers_y + 1);
+        for (i = [1:dividers_y]) {
+            translate([inner_offset, inner_offset + i * spacing_y - wall_thickness/2, base_height + wall_thickness])
+                cube([wall_w - inner_offset * 2, wall_thickness, wall_h - wall_thickness]);
+        }
+    }
+}
+
+// Main assembly
+color("#3b82f6")
+union() {
+    gridfinity_base(grid_x, grid_y);
+    gridfinity_walls(grid_x, grid_y, grid_z);
+    gridfinity_dividers(grid_x, grid_y, grid_z);
+}
+`;
+
+    // Import and initialize the playground
+    import('https://esm.sh/openscad-playground@2.0.1?bundle').then(({ OpenSCADPlayground }) => {
+      const container = document.getElementById('openscad-playground');
+      container.innerHTML = '';
+      
+      const root = ReactDOM.createRoot(container);
+      root.render(
+        React.createElement(OpenSCADPlayground, {
+          initialFiles: {
+            'gridfinity-bin.scad': GRIDFINITY_CODE
+          },
+          layout: 'multi',
+          defaultFocus: 'customizer',
+          theme: 'dark',
+          features: {
+            filePicker: true,
+            export: true,
+            syntaxCheck: true,
+            customizer: true
+          },
+          style: {
+            width: '100%',
+            height: '100%'
+          }
+        })
+      );
+    }).catch(error => {
+      console.error('Failed to load OpenSCAD playground:', error);
+      document.getElementById('openscad-playground').innerHTML = `
+        <div class="loading">
+          <p style="color: #ef4444;">Failed to load OpenSCAD playground</p>
+          <p style="font-size: 0.8rem; color: #71717a;">${error.message}</p>
+        </div>
+      `;
+    });
+  </script>
+</body>
+</html>
+
+
